@@ -1,9 +1,6 @@
-"use client";
-
 import { ModeToggle } from "@/components/mode-toggle";
-import { SignInButton, UserButton } from "@clerk/nextjs";
-import { Authenticated, Unauthenticated } from "convex/react";
 import { FilePen } from "lucide-react";
+import { HeaderActions } from "./header-actions";
 
 export function Header() {
   return (
@@ -14,15 +11,10 @@ export function Header() {
           <FilePen />
         </div>
         <div>
-          <Unauthenticated>
-            <SignInButton />
-          </Unauthenticated>
-          <Authenticated>
-            <div className="flex gap-4">
-              <ModeToggle />
-              <UserButton />
-            </div>
-          </Authenticated>
+          <div className="flex gap-4 items-center">
+            <ModeToggle />
+            <HeaderActions />
+          </div>
         </div>
       </div>
     </div>
