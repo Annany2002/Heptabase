@@ -1,5 +1,7 @@
 "use client";
 
+import { ModeToggle } from "@/components/mode-toggle";
+import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { SignInButton, UserButton } from "@clerk/nextjs";
 import {
@@ -14,15 +16,11 @@ export default function Home() {
   const createDocument = useMutation(api.documents.createDocument);
 
   return (
-    <main className="flex flex-col justify-center items-center min-h-screen">
-      <Unauthenticated>
-        <SignInButton />
-      </Unauthenticated>
+    <main className="flex flex-col gap-2 justify-center items-center min-h-screen">
       <Authenticated>
-        <UserButton />
-        <button onClick={() => createDocument({ title: "Hello world" })}>
+        <Button onClick={() => createDocument({ title: "Hello world" })}>
           Click Me
-        </button>
+        </Button>
         {documents?.map((doc) => <div key={doc._id}>{doc.title}</div>)}
       </Authenticated>
     </main>
