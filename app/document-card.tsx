@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Doc } from "@/convex/_generated/dataModel";
+import { EyeIcon } from "lucide-react";
+import Link from "next/link";
 
 export function DocumentCard({ document }: { document: Doc<"documents"> }) {
   return (
@@ -22,7 +24,15 @@ export function DocumentCard({ document }: { document: Doc<"documents"> }) {
         <p>Card Content</p>
       </CardContent>
       <CardFooter>
-        <Button variant={"secondary"}>View</Button>
+        <Button
+          asChild
+          className="flex items-center gap-2"
+          variant={"secondary"}
+        >
+          <Link href={`/documents/${document._id}`}>
+            <EyeIcon className="w-4 h-4" /> View
+          </Link>
+        </Button>
       </CardFooter>
     </Card>
   );

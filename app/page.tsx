@@ -2,7 +2,7 @@
 
 import { api } from "@/convex/_generated/api";
 import { DocumentCard } from "./document-card";
-import CreateDocumentButton from "./create-document-button";
+import UploadDocumentButton from "./upload-document-button";
 import { useQuery } from "convex/react";
 
 export default function Home() {
@@ -12,7 +12,7 @@ export default function Home() {
     <main className="p-24 space-y-8">
       <div className="flex justify-between">
         <h1 className="font-bold text-4xl">My Documents</h1>
-        <CreateDocumentButton />
+        <UploadDocumentButton />
       </div>
 
       <div className="grid grid-cols-4 gap-8">
