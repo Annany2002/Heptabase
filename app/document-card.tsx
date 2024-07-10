@@ -3,7 +3,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -17,8 +16,9 @@ export function DocumentCard({ document }: { document: Doc<"documents"> }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{document.title}</CardTitle>
-        <CardDescription></CardDescription>
+        <CardTitle className="text-lg text-gray-400">
+          {document.title}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <p>Card Content</p>

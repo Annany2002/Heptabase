@@ -9,4 +9,11 @@ export default defineSchema({
 
     //using index fast querying
   }).index("by_tokenIdentifier", ["tokenIdentifier"]),
+
+  chats: defineTable({
+    documentId: v.id("documents"),
+    tokenIdentifier: v.string(),
+    text: v.string(),
+    isHuman: v.boolean(),
+  }).index("by_documentId_tokenIdentifier", ["documentId", "tokenIdentifier"]),
 });

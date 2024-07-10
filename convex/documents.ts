@@ -1,8 +1,52 @@
-import { mutation, query } from "./_generated/server";
+import {
+  action,
+  internalQuery,
+  mutation,
+  MutationCtx,
+  query,
+  QueryCtx,
+} from "./_generated/server";
 import { ConvexError, v } from "convex/values";
+import { internal } from "./_generated/api";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Id } from "./_generated/dataModel";
+
+const genAI = new GoogleGenerativeAI(process.env.API_KEY as string);
+
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 export const generateUploadUrl = mutation(async (ctx) => {
   return await ctx.storage.generateUploadUrl();
+});
+
+export async function hasAccessToDocument(
+  ctx: MutationCtx | QueryCtx,
+  documentId: Id<"documents">
+) {
+  const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
+
+  if (!userId) {
+    return null;
+  }
+
+  const document = await ctx.db.get(documentId);
+
+  if (!document) return null;
+
+  if (document.tokenIdentifier !== userId) {
+    throw new ConvexError("Unauthorized");
+  }
+
+  return { document, userId };
+}
+
+export const hasAccessToDocumentQuery = internalQuery({
+  args: {
+    documentId: v.id("documents"),
+  },
+  async handler(ctx, args) {
+    return await hasAccessToDocument(ctx, args.documentId);
+  },
 });
 
 export const createDocument = mutation({
@@ -46,23 +90,81 @@ export const getDocument = query({
   },
 
   async handler(ctx, args) {
-    const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
+    const obj = await hasAccessToDocument(ctx, args.documentId);
 
-    if (!userId) {
-      return null;
-    }
+    if (!obj) return null;
 
-    const document = await ctx.db.get(args.documentId);
+    return {
+      ...obj.document,
+      documentUrl: await ctx.storage.getUrl(obj.document.fileId),
+    };
+  },
+});
 
-    if (!document) return null;
+export const askQuestion = action({
+  args: {
+    question: v.string(),
+    documentId: v.id("documents"),
+  },
+  async handler(ctx, args) {
+    const obj = await ctx.runQuery(
+      internal.documents.hasAccessToDocumentQuery,
+      {
+        documentId: args.documentId,
+      }
+    );
 
-    if (document.tokenIdentifier !== userId) {
+    if (!obj) {
       throw new ConvexError("Unauthorized");
     }
 
-    return {
-      ...document,
-      documentUrl: await ctx.storage.getUrl(document.fileId),
-    };
+    const file = await ctx.storage.get(obj.document.fileId);
+
+    if (!file) {
+      throw new ConvexError("File Not Found");
+    }
+
+    const text = await file.text();
+
+    const chat = model.startChat({
+      history: [
+        {
+          role: "user",
+          parts: [
+            {
+              text: `${text} \nTake reference from this document and answer the following: \n`,
+            },
+          ],
+        },
+        {
+          role: "model",
+          parts: [{ text: "Great to meet you. What would you like to know?" }],
+        },
+      ],
+    });
+
+    const msg = `${args.question}`;
+
+    const result = await chat.sendMessage(msg);
+    const response = await result.response;
+    const res = response.text();
+
+    //HUMAN
+    await ctx.runMutation(internal.chats.createChatRecord, {
+      documentId: args.documentId,
+      text: args.question,
+      isHuman: true,
+      tokenIdentifier: obj.userId,
+    });
+
+    //AI
+    await ctx.runMutation(internal.chats.createChatRecord, {
+      documentId: args.documentId,
+      text: res,
+      isHuman: false,
+      tokenIdentifier: obj.userId,
+    });
+
+    return res;
   },
 });
