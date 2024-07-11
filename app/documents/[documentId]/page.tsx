@@ -4,8 +4,9 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import ChatPanel from "./chat-panel";
-import { Loader, Loader2Icon } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import DeleteDocumentButton from "./delete-document-button";
 
 export default function DocumentPage({
   params,
@@ -18,8 +19,12 @@ export default function DocumentPage({
 
   if (!document) {
     return (
-      <div className="flex items-center w-full h-[calc(100dvh-72px)] justify-center">
-        <Loader2Icon className="animate-spin" size={42} />
+      <div className="flex flex-col gap-5 items-start px-12 w-full h-[calc(100dvh-72px)] justify-center">
+        <Skeleton className="h-16 w-1/2" />
+        <div className="flex flex-col space-y-3 w-3/4">
+          <Skeleton className="h-[300px] w-full rounded-md" />
+        </div>
+        <Skeleton className="h-16 w-1/2" />
       </div>
     );
   }
@@ -28,6 +33,8 @@ export default function DocumentPage({
     <main className="space-y-8 p-24">
       <div className="flex justify-between items-center">
         <h1 className="text-4xl font-bold">{document.title}</h1>
+
+        <DeleteDocumentButton documentId={document._id} />
       </div>
       <div className="flex gap-12">
         <Tabs defaultValue="document" className="w-full">

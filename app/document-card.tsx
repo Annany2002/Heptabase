@@ -11,6 +11,11 @@ import { Button } from "@/components/ui/button";
 import { Doc } from "@/convex/_generated/dataModel";
 import { EyeIcon } from "lucide-react";
 import Link from "next/link";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 export function DocumentCard({ document }: { document: Doc<"documents"> }) {
   return (
@@ -20,8 +25,8 @@ export function DocumentCard({ document }: { document: Doc<"documents"> }) {
           {document.title}
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <p>Card Content</p>
+      <CardContent className="cursor-pointer">
+        <HoverItem description={document.description} />
       </CardContent>
       <CardFooter>
         <Button
@@ -35,5 +40,17 @@ export function DocumentCard({ document }: { document: Doc<"documents"> }) {
         </Button>
       </CardFooter>
     </Card>
+  );
+}
+
+function HoverItem({ description }: { description: string }) {
+  const sliceDescription =
+    description.substring(0, 85).concat("...") || "Generating Descritption...";
+
+  return (
+    <HoverCard>
+      <HoverCardTrigger>{sliceDescription}</HoverCardTrigger>
+      <HoverCardContent>{description}</HoverCardContent>
+    </HoverCard>
   );
 }

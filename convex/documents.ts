@@ -1,5 +1,7 @@
 import {
   action,
+  internalAction,
+  internalMutation,
   internalQuery,
   mutation,
   MutationCtx,
@@ -53,6 +55,7 @@ export const createDocument = mutation({
   args: {
     title: v.string(),
     fileId: v.id("_storage"),
+    description: v.string(),
   },
   async handler(ctx, args) {
     const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
@@ -61,10 +64,59 @@ export const createDocument = mutation({
       throw new ConvexError("Not Authenticated");
     }
 
-    await ctx.db.insert("documents", {
+    const documentId = await ctx.db.insert("documents", {
       title: args.title,
       tokenIdentifier: userId,
       fileId: args.fileId,
+      description: "",
+    });
+
+    await ctx.scheduler.runAfter(
+      0,
+      internal.documents.generateDocumentDescription,
+      {
+        fileId: args.fileId,
+        documentId,
+      }
+    );
+  },
+});
+
+export const generateDocumentDescription = internalAction({
+  args: {
+    fileId: v.id("_storage"),
+    documentId: v.id("documents"),
+  },
+  async handler(ctx, args) {
+    const file = await ctx.storage.get(args.fileId);
+
+    if (!file) {
+      throw new ConvexError("File Not Found");
+    }
+
+    const text = await file.text();
+
+    const prompt = `Here is a document. Please provide a very short and concise description of the document: \n${text}`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const resText = response.text();
+
+    await ctx.runMutation(internal.documents.updateDocumentDescription, {
+      documentId: args.documentId,
+      description: resText,
+    });
+  },
+});
+
+export const updateDocumentDescription = internalMutation({
+  args: {
+    documentId: v.id("documents"),
+    description: v.string(),
+  },
+  async handler(ctx, args) {
+    await ctx.db.patch(args.documentId, {
+      description: args.description,
     });
   },
 });
@@ -74,7 +126,7 @@ export const getDocuments = query({
     const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
 
     if (!userId) {
-      return [];
+      return undefined;
     }
 
     return await ctx.db
@@ -98,6 +150,23 @@ export const getDocument = query({
       ...obj.document,
       documentUrl: await ctx.storage.getUrl(obj.document.fileId),
     };
+  },
+});
+
+export const deleteDocument = mutation({
+  args: {
+    documentId: v.id("documents"),
+  },
+  async handler(ctx, args) {
+    const obj = await hasAccessToDocument(ctx, args.documentId);
+
+    if (!obj) {
+      console.log("Unauthorized");
+      throw new ConvexError("Unauthorized");
+    }
+
+    await ctx.storage.delete(obj.document.fileId);
+    await ctx.db.delete(args.documentId);
   },
 });
 
