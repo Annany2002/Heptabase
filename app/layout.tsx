@@ -3,6 +3,7 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Header } from "./header";
+import { Toaster } from "@/components/ui/toaster";
 
 const roboto = Roboto({ weight: ["100", "300", "500"], subsets: ["latin"] });
 
@@ -22,6 +23,7 @@ export default function RootLayout({
         <Providers>
           <Header />
           {children}
+          <Toaster />
         </Providers>
       </body>
     </html>

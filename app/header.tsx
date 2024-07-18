@@ -14,6 +14,11 @@ export function Header() {
           HeptaBase
           <FilePen />
         </Link>
+        <nav>
+          <Link className="hover:text-gray-400" href={"/dashboard"}>
+            Documents
+          </Link>
+        </nav>
         <div>
           <div className="flex gap-4 items-center">
             <ModeToggle />

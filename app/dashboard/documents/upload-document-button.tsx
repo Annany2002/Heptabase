@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import UploadDocumentForm from "./upload-document-form";
+import UploadDocumentForm from "../documents/upload-document-form";
 import { useState } from "react";
 import { Upload } from "lucide-react";
 
