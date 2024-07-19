@@ -45,7 +45,7 @@ export default function Home() {
             to use our services
           </div>
           <Image
-            src="./undraw_welcome_re_h3d9.svg"
+            src="/undraw_welcome_re_h3d9.svg"
             alt="authentication"
             height={300}
             width={300}

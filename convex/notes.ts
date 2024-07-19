@@ -1,5 +1,16 @@
 import { ConvexError, v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import {
+  internalAction,
+  internalMutation,
+  mutation,
+  query,
+} from "./_generated/server";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { internal } from "./_generated/api";
+
+const genAI = new GoogleGenerativeAI(process.env.API_KEY as string);
+
+const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
 
 export const getNotes = query({
   async handler(ctx) {
@@ -17,6 +28,38 @@ export const getNotes = query({
   },
 });
 
+async function embed(text: string) {
+  const embedding = await model.embedContent(text);
+  return embedding.embedding.values;
+}
+
+export const setNoteEmbeddings = internalMutation({
+  args: {
+    noteId: v.id("notes"),
+    embedding: v.array(v.number()),
+  },
+  async handler(ctx, args) {
+    await ctx.db.patch(args.noteId, {
+      embedding: args.embedding,
+    });
+  },
+});
+
+export const createNoteEmbeddings = internalAction({
+  args: {
+    noteId: v.id("notes"),
+    text: v.string(),
+  },
+  async handler(ctx, args) {
+    const embedding = await embed(args.text);
+
+    await ctx.runMutation(internal.notes.setNoteEmbeddings, {
+      noteId: args.noteId,
+      embedding,
+    });
+  },
+});
+
 export const createNote = mutation({
   args: {
     text: v.string(),
@@ -28,9 +71,13 @@ export const createNote = mutation({
       throw new ConvexError("User not found");
     }
 
-    const note = await ctx.db.insert("notes", {
+    const noteId = await ctx.db.insert("notes", {
       text: args.text,
       tokenIdentifier: userId,
+    });
+    await ctx.scheduler.runAfter(0, internal.notes.createNoteEmbeddings, {
+      noteId,
+      text: args.text,
     });
   },
 });
@@ -53,5 +100,28 @@ export const getNote = query({
       throw new ConvexError("Unaauthorized");
     }
     return note;
+  },
+});
+
+export const deleteNote = mutation({
+  args: {
+    noteId: v.id("notes"),
+  },
+  async handler(ctx, args) {
+    const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
+
+    if (!userId) {
+      throw new ConvexError("Please login to use this service");
+    }
+
+    const note = await ctx.db.get(args.noteId);
+    if (!note) {
+      throw new ConvexError("Note not found");
+    }
+    if (note.tokenIdentifier !== userId) {
+      throw new ConvexError("Unauthorized");
+    }
+
+    await ctx.db.delete(args.noteId);
   },
 });
