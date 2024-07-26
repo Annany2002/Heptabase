@@ -28,10 +28,10 @@ export const getNotes = query({
   },
 });
 
-async function embed(text: string) {
+export const embed = async (text: string) => {
   const embedding = await model.embedContent(text);
   return embedding.embedding.values;
-}
+};
 
 export const setNoteEmbeddings = internalMutation({
   args: {
@@ -75,6 +75,7 @@ export const createNote = mutation({
       text: args.text,
       tokenIdentifier: userId,
     });
+
     await ctx.scheduler.runAfter(0, internal.notes.createNoteEmbeddings, {
       noteId,
       text: args.text,

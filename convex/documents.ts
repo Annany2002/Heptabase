@@ -12,6 +12,7 @@ import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Id } from "./_generated/dataModel";
+import { embed } from "./notes";
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY as string);
 
@@ -102,9 +103,12 @@ export const generateDocumentDescription = internalAction({
     const response = await result.response;
     const resText = response.text();
 
+    const embedding = await embed(resText);
+
     await ctx.runMutation(internal.documents.updateDocumentDescription, {
       documentId: args.documentId,
       description: resText,
+      embedding,
     });
   },
 });
@@ -113,10 +117,12 @@ export const updateDocumentDescription = internalMutation({
   args: {
     documentId: v.id("documents"),
     description: v.string(),
+    embedding: v.array(v.float64()),
   },
   async handler(ctx, args) {
     await ctx.db.patch(args.documentId, {
       description: args.description,
+      embedding: args.embedding,
     });
   },
 });

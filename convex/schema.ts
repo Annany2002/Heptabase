@@ -6,8 +6,15 @@ export default defineSchema({
     title: v.string(),
     description: v.string(),
     tokenIdentifier: v.string(),
+    embedding: v.optional(v.array(v.float64())),
     fileId: v.id("_storage"),
-  }).index("by_tokenIdentifier", ["tokenIdentifier"]),
+  })
+    .index("by_tokenIdentifier", ["tokenIdentifier"])
+    .vectorIndex("by_embedding", {
+      vectorField: "embedding",
+      dimensions: 768,
+      filterFields: ["tokenIdentifier"],
+    }),
 
   notes: defineTable({
     text: v.string(),
@@ -17,7 +24,7 @@ export default defineSchema({
     .index("by_tokenIdentifier", ["tokenIdentifier"])
     .vectorIndex("by_embedding", {
       vectorField: "embedding",
-      dimensions: 1536,
+      dimensions: 768,
       filterFields: ["tokenIdentifier"],
     }),
   chats: defineTable({

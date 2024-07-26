@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Doc } from "@/convex/_generated/dataModel";
-import { EyeIcon } from "lucide-react";
+import { EyeIcon, Loader2 } from "lucide-react";
 import Link from "next/link";
 import {
   HoverCard,
@@ -34,7 +34,7 @@ export function DocumentCard({ document }: { document: Doc<"documents"> }) {
           className="flex items-center gap-2"
           variant={"secondary"}
         >
-          <Link href={`/documents/${document._id}`}>
+          <Link href={`/dashboard/documents/${document._id}`}>
             <EyeIcon className="w-4 h-4" /> View
           </Link>
         </Button>
@@ -44,13 +44,14 @@ export function DocumentCard({ document }: { document: Doc<"documents"> }) {
 }
 
 function HoverItem({ description }: { description: string }) {
-  const sliceDescription =
-    description.substring(0, 85).concat("...") || "Generating Descritption...";
+  const sliceDescription = description.substring(0, 85).concat("...");
 
   return (
     <HoverCard>
       <HoverCardTrigger>{sliceDescription}</HoverCardTrigger>
-      <HoverCardContent>{description}</HoverCardContent>
+      <HoverCardContent>
+        {description ? sliceDescription : <Loader2 className="animate-spin" />}
+      </HoverCardContent>
     </HoverCard>
   );
 }
