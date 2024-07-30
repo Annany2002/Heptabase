@@ -37,15 +37,6 @@ export default function SideNav() {
             Notes
           </Link>
         </li>
-        <li>
-          <Link
-            className={`font-light flex gap-2 items-center text-xl hover:text-cyan-200 ${pathName.endsWith("/settings") && "text-cyan-300"}`}
-            href={"/dashboard/settings"}
-          >
-            <Settings />
-            Settings
-          </Link>
-        </li>
       </ul>
     </nav>
   );

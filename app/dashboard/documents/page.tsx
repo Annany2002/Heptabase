@@ -13,10 +13,14 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import Image from "next/image";
-import { SignInButton } from "@clerk/nextjs";
+import { SignInButton, useOrganization } from "@clerk/nextjs";
 
 export default function Home() {
-  const documents = useQuery(api.documents.getDocuments);
+  const organization = useOrganization();
+
+  const documents = useQuery(api.documents.getDocuments, {
+    orgId: organization.organization?.id,
+  });
 
   return (
     <main className="space-y-8">
