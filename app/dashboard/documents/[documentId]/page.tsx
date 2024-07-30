@@ -43,9 +43,12 @@ export default function DocumentPage({
             <TabsTrigger value="chat">Chat</TabsTrigger>
           </TabsList>
           <TabsContent value="document">
-            <div className="border p-4 bg-gray-800 rounded-xl flex-1 h-[500px]">
+            <div className="border p-4 rounded-xl flex-1 h-[500px]">
               {document.documentUrl && (
-                <iframe className="w-full h-full" src={document.documentUrl} />
+                <iframe
+                  className="w-full text-black h-full"
+                  src={document.documentUrl}
+                />
               )}
             </div>
           </TabsContent>

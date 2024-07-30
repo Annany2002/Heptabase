@@ -13,7 +13,10 @@ export default function SearchResultComponent({
   score: number;
 }) {
   return (
-    <Link href={url} className="bg-slate-800 p-4 rounded-md ">
+    <Link
+      href={url}
+      className="bg-slate-100 border dark:bg-slate-800 p-4 rounded-md "
+    >
       <div className="space-y-2">
         <div className="flex justify-between">
           <div className="flex gap-2 items-center">

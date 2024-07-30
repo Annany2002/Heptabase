@@ -48,6 +48,7 @@ export function QuestionForm({ documentId }: { documentId: Id<"documents"> }) {
             <FormItem className="flex-1">
               <FormControl>
                 <Input
+                  className="bg-neutral-200 dark:bg-transparent"
                   placeholder="Ask any question over this document"
                   {...field}
                 />

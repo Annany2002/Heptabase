@@ -12,7 +12,7 @@ export default function SideNav() {
       <ul className="space-y-6">
         <li>
           <Link
-            className={`font-light flex gap-2 items-center text-xl hover:text-cyan-200 ${pathName.endsWith("/search") && "text-cyan-300"}`}
+            className={`font-light flex gap-2 items-center text-xl hover:text-cyan-300 ${pathName.endsWith("/search") && "text-cyan-400"}`}
             href={"/dashboard/search"}
           >
             <Search />
@@ -21,7 +21,7 @@ export default function SideNav() {
         </li>
         <li>
           <Link
-            className={`font-light flex gap-2 items-center text-xl hover:text-cyan-200 ${pathName.endsWith("/documents") && "text-cyan-300"}`}
+            className={`font-light flex gap-2 items-center text-xl hover:text-cyan-300 ${pathName.endsWith("/documents") && "text-cyan-400"}`}
             href={"/dashboard/documents"}
           >
             <FileText />
@@ -30,7 +30,7 @@ export default function SideNav() {
         </li>
         <li>
           <Link
-            className={`font-light flex gap-2 items-center text-xl hover:text-cyan-200 ${pathName.endsWith("/notes") && "text-cyan-300"}`}
+            className={`font-light flex gap-2 items-center text-xl hover:text-cyan-300 ${pathName.endsWith("/notes") && "text-cyan-400"}`}
             href={"/dashboard/notes"}
           >
             <NotebookPen />

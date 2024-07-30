@@ -5,10 +5,8 @@ import { useParams } from "next/navigation";
 import { Id } from "@/convex/_generated/dataModel";
 import { api } from "@/convex/_generated/api";
 import DeleteNoteButton from "./delete-note-button";
-import { useOrganization } from "@clerk/nextjs";
 
 export default function NotesPage() {
-  const organization = useOrganization();
   const { noteId } = useParams<{ noteId: Id<"notes"> }>();
   const note = useQuery(api.notes.getNote, {
     noteId,
@@ -18,7 +16,7 @@ export default function NotesPage() {
   }
 
   return (
-    <div className="p-3 bg-gray-700 w-[600px]">
+    <div className="p-3 bg-slate-100 rounded-md border dark:bg-gray-700 w-[600px]">
       <DeleteNoteButton noteId={note._id} />
       <p className="whitespace-pre-line break-words">{note?.text}</p>
     </div>
