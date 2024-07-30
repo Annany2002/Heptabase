@@ -14,16 +14,19 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useOrganization } from "@clerk/nextjs";
 
 export default function NotesLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const notes = useQuery(api.notes.getNotes);
+  const organization = useOrganization();
+  const notes = useQuery(api.notes.getNotes, {
+    orgId: organization.organization?.id,
+  });
   const { noteId } = useParams<{ noteId: Id<"notes"> }>();
-
-  const hasNotes = notes && notes.length > 0;
 
   return (
     <main className="space-y-6">
@@ -31,8 +34,23 @@ export default function NotesLayout({
         <h1 className="font-bold text-4xl">Notes</h1>
         <CreateNoteButton />
       </div>
-      {!hasNotes && <NoNotes />}
-      {hasNotes && (
+      {!notes && (
+        <div className="flex gap-10">
+          <div className="w-[300px] space-y-4">
+            <Skeleton className="h-[20px] w-full" />
+            <Skeleton className="h-[20px] w-full" />
+            <Skeleton className="h-[20px] w-full" />
+            <Skeleton className="h-[20px] w-full" />
+          </div>
+          <div className="flex-1">
+            <Skeleton className="w-full h-[400px]" />
+          </div>
+        </div>
+      )}
+
+      {notes && notes.length === 0 && <NoNotes />}
+
+      {notes && notes.length > 0 && (
         <div className="flex gap-12">
           <ul className="space-y-2 w-[200px]">
             {notes?.map((note) => (

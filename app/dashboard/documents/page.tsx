@@ -75,10 +75,11 @@ function NoDocuments() {
         </CardHeader>
         <CardContent>
           <Image
-            src="./undraw_add_files_re_v09g.svg"
+            src="/undraw_add_files_re_v09g.svg"
             alt="upload-in-empty"
             height="150"
             width="150"
+            priority
           />
         </CardContent>
         <CardFooter>

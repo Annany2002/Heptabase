@@ -11,7 +11,7 @@ import {
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 import { embed } from "./notes";
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY as string);
@@ -21,6 +21,26 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 export const generateUploadUrl = mutation(async (ctx) => {
   return await ctx.storage.generateUploadUrl();
 });
+
+export const hasOrgAccess = async (
+  ctx: MutationCtx | QueryCtx,
+  orgId: string
+) => {
+  const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
+
+  if (!userId) {
+    return false;
+  }
+
+  const membership = await ctx.db
+    .query("memberships")
+    .withIndex("by_orgId_userId", (q) =>
+      q.eq("orgId", orgId).eq("userId", userId)
+    )
+    .first();
+
+  return !!membership;
+};
 
 export async function hasAccessToDocument(
   ctx: MutationCtx | QueryCtx,
@@ -36,11 +56,18 @@ export async function hasAccessToDocument(
 
   if (!document) return null;
 
-  if (document.tokenIdentifier !== userId) {
-    throw new ConvexError("Unauthorized");
-  }
+  if (document.orgId) {
+    const hasAccess = await hasOrgAccess(ctx, document.orgId);
+    if (!hasAccess) {
+      throw new ConvexError("Unauthorized");
+    } else {
+      if (document.tokenIdentifier !== userId) {
+        throw new ConvexError("Unauthorized");
+      }
+    }
 
-  return { document, userId };
+    return { document, userId };
+  }
 }
 
 export const hasAccessToDocumentQuery = internalQuery({
@@ -57,6 +84,7 @@ export const createDocument = mutation({
     title: v.string(),
     fileId: v.id("_storage"),
     description: v.string(),
+    orgId: v.optional(v.string()),
   },
   async handler(ctx, args) {
     const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
@@ -65,12 +93,28 @@ export const createDocument = mutation({
       throw new ConvexError("Not Authenticated");
     }
 
-    const documentId = await ctx.db.insert("documents", {
-      title: args.title,
-      tokenIdentifier: userId,
-      fileId: args.fileId,
-      description: "",
-    });
+    let documentId: Id<"documents">;
+
+    if (args.orgId) {
+      const isMember = await hasOrgAccess(ctx, args.orgId);
+      if (!isMember) {
+        throw new ConvexError("Unauthorized");
+      }
+      documentId = await ctx.db.insert("documents", {
+        title: args.title,
+        tokenIdentifier: userId,
+        fileId: args.fileId,
+        description: "",
+        orgId: args.orgId,
+      });
+    } else {
+      documentId = await ctx.db.insert("documents", {
+        title: args.title,
+        tokenIdentifier: userId,
+        fileId: args.fileId,
+        description: "",
+      });
+    }
 
     await ctx.scheduler.runAfter(
       0,
@@ -128,11 +172,25 @@ export const updateDocumentDescription = internalMutation({
 });
 
 export const getDocuments = query({
-  async handler(ctx) {
+  args: {
+    orgId: v.optional(v.string()),
+  },
+  async handler(ctx, args) {
     const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
 
     if (!userId) {
       return undefined;
+    }
+
+    if (args.orgId) {
+      const isMember = await hasOrgAccess(ctx, args.orgId);
+      if (!isMember) {
+        return null;
+      }
+      return await ctx.db
+        .query("documents")
+        .withIndex("by_orgId", (q) => q.eq("orgId", args.orgId))
+        .collect();
     }
 
     return await ctx.db
