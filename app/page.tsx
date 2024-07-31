@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function LandingPage() {
   return (
-    <div className="bg-slate-100 min-h-screen">
+    <div className="bg-slate-100 dark:bg-black min-h-screen">
       <div className="relative isolate pt-10 px-6 lg:px-8">
         <div
           aria-hidden="true"

@@ -2,6 +2,7 @@
 
 import { SignInButton, UserButton } from "@clerk/nextjs";
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
+import { LoaderCircle } from "lucide-react";
 
 export function HeaderActions() {
   return (
@@ -14,7 +15,12 @@ export function HeaderActions() {
         <UserButton />
       </Authenticated>
 
-      <AuthLoading>Loading...</AuthLoading>
+      <AuthLoading>
+        <div className="flex gap-2">
+          Loading
+          <LoaderCircle className="animate-spin" />
+        </div>
+      </AuthLoading>
     </>
   );
 }
