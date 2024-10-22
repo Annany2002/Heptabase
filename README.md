@@ -1,5 +1,7 @@
 ## Heptabase: An AI Chat PDF Webapp
 
+![Screenshot 2024-10-22 113938](https://github.com/user-attachments/assets/527ec6c0-48ff-452f-8c60-f9c0d25050ba)
+
 ### Introduction
 
 Heptabase is a full-stack web application designed to provide users with an intelligent and interactive way to interact with PDF documents. Using advanced AI capabilities powered by the Gemini API, Heptabase offers a seamless experience for users to ask questions, get summaries, and extract relevant information from their PDFs.
