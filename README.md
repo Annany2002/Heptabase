@@ -25,7 +25,7 @@ Heptabase is a full-stack web application designed to provide users with an inte
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/heptabase.git
+   git clone https://github.com/Annany2002/Heptabase.git
    ```
 2. **Install Dependencies:**
    ```bash
