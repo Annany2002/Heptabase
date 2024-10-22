@@ -8,10 +8,10 @@ import {
   query,
   QueryCtx,
 } from "./_generated/server";
-import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
+import { ConvexError, v } from "convex/values";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Doc, Id } from "./_generated/dataModel";
 import { embed } from "./notes";
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY as string);
@@ -240,6 +240,7 @@ export const askQuestion = action({
     documentId: v.id("documents"),
   },
   async handler(ctx, args) {
+    console.log(process.env.API_KEY);
     const obj = await ctx.runQuery(
       internal.documents.hasAccessToDocumentQuery,
       {
@@ -258,6 +259,7 @@ export const askQuestion = action({
     }
 
     const text = await file.text();
+    console.log(text);
 
     const chat = model.startChat({
       history: [

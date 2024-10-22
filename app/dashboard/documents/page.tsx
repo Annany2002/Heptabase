@@ -57,7 +57,7 @@ export default function Home() {
         </div>
       </Unauthenticated>
 
-      <div className="grid grid-cols-4 gap-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
         {documents?.map((doc) => (
           <div key={doc._id}>
             <DocumentCard document={doc} />

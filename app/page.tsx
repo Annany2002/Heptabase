@@ -1,9 +1,13 @@
 "use client";
 
 import { SignInButton } from "@clerk/nextjs";
+import { Authenticated, Unauthenticated } from "convex/react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function LandingPage() {
+  const handleRedirect = () => {};
+
   return (
     <div className="bg-slate-100 dark:bg-black min-h-screen">
       <div className="relative isolate pt-10 px-6 lg:px-8">
@@ -37,9 +41,20 @@ export default function LandingPage() {
               vector search
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <button className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                <SignInButton>Get started</SignInButton>
-              </button>
+              <Unauthenticated>
+                <SignInButton>
+                  <div className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 cursor-pointer">
+                    Let&apos;s Get Started
+                  </div>
+                </SignInButton>
+              </Unauthenticated>
+              <Authenticated>
+                <Link href={"/dashboard"}>
+                  <button className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    Dashboard
+                  </button>
+                </Link>
+              </Authenticated>
             </div>
           </div>
         </div>
