@@ -1,5 +1,5 @@
 import { httpRouter } from "convex/server";
-import { httpAction } from "./_generated/server";
+import { httpAction, mutation } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { WebhookEvent } from "@clerk/nextjs/server";
 
@@ -23,19 +23,12 @@ http.route({
       });
 
       switch (result.type) {
-        case "organizationMembership.updated":
-        case "organizationMembership.created":
-          await ctx.runMutation(internal.memberships.addUserToOrganization, {
-            userId: `https://${process.env.CLERK_HOSTNAME}|${result.data.public_user_data.user_id}`,
-            orgId: result.data.organization.id,
+        case "user.created":
+          await ctx.runMutation(internal.user.createUser, {
+            tokenIdentifier: result.data.id,
+            name: result.data.first_name as string,
+            email: result.data.email_addresses[0].email_address,
           });
-          break;
-        case "organizationMembership.deleted":
-          await ctx.runMutation(internal.memberships.removeUserIdFromOrg, {
-            userId: `https://${process.env.CLERK_HOSTNAME}|${result.data.public_user_data.user_id}`,
-            orgId: result.data.organization.id,
-          });
-          break;
       }
 
       return new Response(null, {

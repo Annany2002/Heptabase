@@ -1,3 +1,5 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { internal } from "./_generated/api";
 import {
   action,
   internalAction,
@@ -8,10 +10,8 @@ import {
   query,
   QueryCtx,
 } from "./_generated/server";
-import { internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 import { ConvexError, v } from "convex/values";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { embed } from "./notes";
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY as string);
@@ -21,26 +21,6 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 export const generateUploadUrl = mutation(async (ctx) => {
   return await ctx.storage.generateUploadUrl();
 });
-
-export const hasOrgAccess = async (
-  ctx: MutationCtx | QueryCtx,
-  orgId: string
-) => {
-  const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
-
-  if (!userId) {
-    return false;
-  }
-
-  const membership = await ctx.db
-    .query("memberships")
-    .withIndex("by_orgId_userId", (q) =>
-      q.eq("orgId", orgId).eq("userId", userId)
-    )
-    .first();
-
-  return !!membership;
-};
 
 export async function hasAccessToDocument(
   ctx: MutationCtx | QueryCtx,
@@ -54,20 +34,15 @@ export async function hasAccessToDocument(
 
   const document = await ctx.db.get(documentId);
 
-  if (!document) return null;
-
-  if (document.orgId) {
-    const hasAccess = await hasOrgAccess(ctx, document.orgId);
-    if (!hasAccess) {
-      throw new ConvexError("Unauthorized");
-    } else {
-      if (document.tokenIdentifier !== userId) {
-        throw new ConvexError("Unauthorized");
-      }
-    }
-
-    return { document, userId };
+  if (!document) {
+    return null;
   }
+
+  if (document.tokenIdentifier !== userId) {
+    throw new ConvexError("Unauthorized");
+  }
+
+  return { document, userId };
 }
 
 export const hasAccessToDocumentQuery = internalQuery({
@@ -84,7 +59,6 @@ export const createDocument = mutation({
     title: v.string(),
     fileId: v.id("_storage"),
     description: v.string(),
-    orgId: v.optional(v.string()),
   },
   async handler(ctx, args) {
     const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
@@ -93,28 +67,12 @@ export const createDocument = mutation({
       throw new ConvexError("Not Authenticated");
     }
 
-    let documentId: Id<"documents">;
-
-    if (args.orgId) {
-      const isMember = await hasOrgAccess(ctx, args.orgId);
-      if (!isMember) {
-        throw new ConvexError("Unauthorized");
-      }
-      documentId = await ctx.db.insert("documents", {
-        title: args.title,
-        tokenIdentifier: userId,
-        fileId: args.fileId,
-        description: "",
-        orgId: args.orgId,
-      });
-    } else {
-      documentId = await ctx.db.insert("documents", {
-        title: args.title,
-        tokenIdentifier: userId,
-        fileId: args.fileId,
-        description: "",
-      });
-    }
+    const documentId = await ctx.db.insert("documents", {
+      title: args.title,
+      tokenIdentifier: userId,
+      fileId: args.fileId,
+      description: "",
+    });
 
     await ctx.scheduler.runAfter(
       0,
@@ -172,25 +130,11 @@ export const updateDocumentDescription = internalMutation({
 });
 
 export const getDocuments = query({
-  args: {
-    orgId: v.optional(v.string()),
-  },
-  async handler(ctx, args) {
+  async handler(ctx) {
     const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
 
     if (!userId) {
-      return undefined;
-    }
-
-    if (args.orgId) {
-      const isMember = await hasOrgAccess(ctx, args.orgId);
-      if (!isMember) {
-        return null;
-      }
-      return await ctx.db
-        .query("documents")
-        .withIndex("by_orgId", (q) => q.eq("orgId", args.orgId))
-        .collect();
+      throw new ConvexError("User not authenticated");
     }
 
     return await ctx.db
@@ -209,7 +153,6 @@ export const getDocument = query({
     const obj = await hasAccessToDocument(ctx, args.documentId);
 
     if (!obj) return null;
-
     return {
       ...obj.document,
       documentUrl: await ctx.storage.getUrl(obj.document.fileId),
@@ -240,7 +183,6 @@ export const askQuestion = action({
     documentId: v.id("documents"),
   },
   async handler(ctx, args) {
-    console.log(process.env.API_KEY);
     const obj = await ctx.runQuery(
       internal.documents.hasAccessToDocumentQuery,
       {
@@ -258,8 +200,7 @@ export const askQuestion = action({
       throw new ConvexError("File Not Found");
     }
 
-    const text = await file.text();
-    console.log(text);
+    const txt = await file.text();
 
     const chat = model.startChat({
       history: [
@@ -267,7 +208,7 @@ export const askQuestion = action({
           role: "user",
           parts: [
             {
-              text: `${text} \nTake reference from this document and answer the following: \n`,
+              text: `${txt} \nTake reference from this document and answer the following: \n`,
             },
           ],
         },
@@ -281,7 +222,7 @@ export const askQuestion = action({
     const msg = `${args.question}`;
 
     const result = await chat.sendMessage(msg);
-    const response = await result.response;
+    const response = result.response;
     const res = response.text();
 
     //HUMAN
