@@ -24,7 +24,7 @@ export default defineSchema({
 
   notes: defineTable({
     text: v.string(),
-    tokenIdentifier: v.optional(v.string()),
+    tokenIdentifier: v.string(),
     embedding: v.optional(v.array(v.float64())),
   })
     .index("by_tokenIdentifier", ["tokenIdentifier"])

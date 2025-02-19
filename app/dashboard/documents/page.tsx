@@ -13,19 +13,15 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import Image from "next/image";
-import { SignInButton, useOrganization } from "@clerk/nextjs";
+import { SignInButton } from "@clerk/nextjs";
 
 export default function Home() {
-  const organization = useOrganization();
-
-  const documents = useQuery(api.documents.getDocuments, {
-    orgId: organization.organization?.id,
-  });
+  const documents = useQuery(api.documents.getDocuments);
 
   return (
     <main className="space-y-8">
       <div className="flex justify-between">
-        <h1 className="font-bold text-4xl">My Documents</h1>
+        <h1 className="font-bold text-3xl">My Documents</h1>
         <UploadDocumentButton />
       </div>
 
@@ -70,7 +66,7 @@ export default function Home() {
 
 function NoDocuments() {
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center h-[25rem]">
       <Card className="mt-10 w-[350px] flex flex-col gap-4 items-center justify-center">
         <CardHeader>
           <CardDescription className="text-lg">

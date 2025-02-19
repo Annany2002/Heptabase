@@ -26,7 +26,11 @@ export function DocumentCard({ document }: { document: Doc<"documents"> }) {
         </CardTitle>
       </CardHeader>
       <CardContent className="cursor-pointer">
-        <HoverItem description={document.description} />
+        {document.description !== "" ? (
+          <HoverItem description={document.description} />
+        ) : (
+          <Loader2 className="animate-spin" />
+        )}
       </CardContent>
       <CardFooter>
         <Button
@@ -49,9 +53,7 @@ function HoverItem({ description }: { description: string }) {
   return (
     <HoverCard>
       <HoverCardTrigger>{sliceDescription}</HoverCardTrigger>
-      <HoverCardContent>
-        {description ? sliceDescription : <Loader2 className="animate-spin" />}
-      </HoverCardContent>
+      <HoverCardContent>{sliceDescription}</HoverCardContent>
     </HoverCard>
   );
 }

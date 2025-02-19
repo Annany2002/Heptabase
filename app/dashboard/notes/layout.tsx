@@ -15,23 +15,19 @@ import {
 } from "@/components/ui/card";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useOrganization } from "@clerk/nextjs";
 
 export default function NotesLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const organization = useOrganization();
-  const notes = useQuery(api.notes.getNotes, {
-    orgId: organization.organization?.id,
-  });
+  const notes = useQuery(api.notes.getNotes);
   const { noteId } = useParams<{ noteId: Id<"notes"> }>();
 
   return (
     <main className="space-y-6">
       <div className="flex justify-between">
-        <h1 className="font-bold text-4xl">Notes</h1>
+        <h1 className="font-bold text-3xl">Notes</h1>
         <CreateNoteButton />
       </div>
       {!notes && (

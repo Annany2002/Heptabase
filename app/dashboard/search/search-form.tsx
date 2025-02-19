@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import LoadingButton from "@/components/loading-button";
-import { useOrganization } from "@clerk/nextjs";
 
 const formSchema = z.object({
   searchQuery: z.string().min(1).max(250),
@@ -25,7 +24,6 @@ export function SearchForm({
 }: {
   setResults: (notes: typeof api.search.searchAction._returnType) => void;
 }) {
-  const organization = useOrganization();
   const searchAction = useAction(api.search.searchAction);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -38,7 +36,6 @@ export function SearchForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     await searchAction({
       searchQuery: values.searchQuery,
-      orgId: organization.organization?.id,
     }).then(setResults);
     form.reset();
   }

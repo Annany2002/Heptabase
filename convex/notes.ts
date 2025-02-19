@@ -13,13 +13,12 @@ const genAI = new GoogleGenerativeAI(process.env.API_KEY as string);
 const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
 
 export const getNotes = query({
-  args: {
-    orgId: v.optional(v.string()),
-  },
-  async handler(ctx, args) {
+  async handler(ctx) {
     const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
 
-    if (!userId) return null;
+    if (!userId) {
+      return null;
+    }
 
     return await ctx.db
       .query("notes")

@@ -6,8 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function LandingPage() {
-  const handleRedirect = () => {};
-
   return (
     <div className="bg-slate-100 dark:bg-black min-h-screen">
       <div className="relative isolate pt-10 px-6 lg:px-8">

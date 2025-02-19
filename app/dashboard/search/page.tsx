@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import { SearchForm } from "./search-form";
 import { api } from "@/convex/_generated/api";
-import Link from "next/link";
-import { FileText, Notebook } from "lucide-react";
 import SearchResultComponent from "./search-result-component";
 
 export default function SearchPage() {
@@ -20,7 +18,7 @@ export default function SearchPage() {
   return (
     <main className="space-y-8">
       <div className="flex justify-between">
-        <h1 className="font-bold text-4xl">Search</h1>
+        <h1 className="font-bold text-3xl">Search</h1>
       </div>
       <SearchForm
         setResults={(results) => {

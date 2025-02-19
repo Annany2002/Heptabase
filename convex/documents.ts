@@ -97,19 +97,27 @@ export const generateDocumentDescription = internalAction({
       throw new ConvexError("File Not Found");
     }
 
-    const text = await file.text();
+    const url = await ctx.storage.getUrl(args.fileId);
 
-    const prompt = `Here is a document. Please provide a very short and concise description of the document: \n${text}`;
+    const pdfResp = await fetch(url).then((response) => response.arrayBuffer());
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const resText = response.text();
+    const base64Data = arrayBufferToBase64(pdfResp);
 
-    const embedding = await embed(resText);
+    const result = await model.generateContent([
+      {
+        inlineData: {
+          data: base64Data,
+          mimeType: "application/pdf",
+        },
+      },
+      "Summarize this document in short",
+    ]);
+
+    const embedding = await embed(result.response.text());
 
     await ctx.runMutation(internal.documents.updateDocumentDescription, {
       documentId: args.documentId,
-      description: resText,
+      description: result.response.text(),
       embedding,
     });
   },
@@ -244,3 +252,12 @@ export const askQuestion = action({
     return res;
   },
 });
+
+function arrayBufferToBase64(buffer: ArrayBuffer) {
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
