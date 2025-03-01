@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAction } from "convex/react";
+import { useAction, useQuery } from "convex/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -31,7 +31,11 @@ export function QuestionForm({ documentId }: { documentId: Id<"documents"> }) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await askQuestion({ question: values.text, documentId });
+    await askQuestion({
+      documentId,
+      question: values.text,
+    });
+
     form.reset();
   }
 

@@ -19,6 +19,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import LoadingButton from "@/components/loading-button";
 import { Id } from "@/convex/_generated/dataModel";
+import { parsePDF } from "@/client/pdfClient";
 
 const formSchema = z.object({
   title: z.string().min(5).max(50),
@@ -50,11 +51,13 @@ export default function UploadDocumentForm({
     });
 
     const { storageId } = await result.json();
+    const parsedText = await parsePDF(values.file);
 
     await createDocument({
       title: values.title,
       fileId: storageId as Id<"_storage">,
       description: "",
+      content: parsedText,
     });
 
     onUpload();

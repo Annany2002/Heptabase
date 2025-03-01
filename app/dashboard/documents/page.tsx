@@ -54,11 +54,12 @@ export default function Home() {
       </Unauthenticated>
 
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
-        {documents?.map((doc) => (
-          <div key={doc._id}>
-            <DocumentCard document={doc} />
-          </div>
-        ))}
+        {documents &&
+          documents.map((doc) => (
+            <div key={doc._id}>
+              <DocumentCard document={doc} />
+            </div>
+          ))}
       </div>
     </main>
   );

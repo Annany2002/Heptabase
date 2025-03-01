@@ -11,6 +11,7 @@ export default defineSchema({
   documents: defineTable({
     title: v.string(),
     description: v.string(),
+    content: v.optional(v.array(v.string())),
     tokenIdentifier: v.optional(v.string()),
     embedding: v.optional(v.array(v.float64())),
     fileId: v.id("_storage"),

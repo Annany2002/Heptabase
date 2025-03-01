@@ -13,6 +13,7 @@ import {
 import { Id } from "./_generated/dataModel";
 import { ConvexError, v } from "convex/values";
 import { embed } from "./notes";
+import { arrayBufferToBase64 } from "../lib/utils";
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY as string);
 
@@ -59,6 +60,7 @@ export const createDocument = mutation({
     title: v.string(),
     fileId: v.id("_storage"),
     description: v.string(),
+    content: v.optional(v.array(v.string())),
   },
   async handler(ctx, args) {
     const userId = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
@@ -72,6 +74,7 @@ export const createDocument = mutation({
       tokenIdentifier: userId,
       fileId: args.fileId,
       description: "",
+      content: args.content,
     });
 
     await ctx.scheduler.runAfter(
@@ -93,11 +96,11 @@ export const generateDocumentDescription = internalAction({
   async handler(ctx, args) {
     const file = await ctx.storage.get(args.fileId);
 
-    if (!file) {
+    const url = await ctx.storage.getUrl(args.fileId);
+
+    if (!file || !url) {
       throw new ConvexError("File Not Found");
     }
-
-    const url = await ctx.storage.getUrl(args.fileId);
 
     const pdfResp = await fetch(url).then((response) => response.arrayBuffer());
 
@@ -180,6 +183,20 @@ export const deleteDocument = mutation({
       throw new ConvexError("Unauthorized");
     }
 
+    const userId = obj.userId;
+
+    const chats = await ctx.db
+      .query("chats")
+      .withIndex("by_documentId_tokenIdentifier", (q) =>
+        q.eq("documentId", args.documentId)
+      )
+      .collect();
+
+    for (const chat of chats) {
+      if (chat.tokenIdentifier === userId) {
+        await ctx.db.delete(chat._id);
+      }
+    }
     await ctx.storage.delete(obj.document.fileId);
     await ctx.db.delete(args.documentId);
   },
@@ -208,15 +225,13 @@ export const askQuestion = action({
       throw new ConvexError("File Not Found");
     }
 
-    const txt = await file.text();
-
     const chat = model.startChat({
       history: [
         {
           role: "user",
           parts: [
             {
-              text: `${txt} \nTake reference from this document and answer the following: \n`,
+              text: ` \n${obj.document.content} \nTake reference from this document and answer the following: \n`,
             },
           ],
         },
@@ -252,12 +267,3 @@ export const askQuestion = action({
     return res;
   },
 });
-
-function arrayBufferToBase64(buffer: ArrayBuffer) {
-  let binary = "";
-  const bytes = new Uint8Array(buffer);
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
