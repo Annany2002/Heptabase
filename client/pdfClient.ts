@@ -2,11 +2,8 @@
 
 import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
 
-// Set the PDF worker source using import.meta (client-specific)
-GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/legacy/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
+// Point to the static file in the public folder
+GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
 export async function parsePDF(file: Blob): Promise<string[]> {
   try {
