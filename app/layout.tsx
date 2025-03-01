@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Header } from "./header";
 import { Toaster } from "@/components/ui/toaster";
 
-const roboto = Roboto({ weight: ["100", "300", "500"], subsets: ["latin"] });
+const monte = Montserrat({ weight: ["100", "300", "500"], subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "HeptaBase",
@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={roboto.className}>
+      <body className={`${monte.className} antialiased`}>
         <Providers>
           <Header />
           {children}
