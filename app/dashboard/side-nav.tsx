@@ -8,7 +8,7 @@ export default function SideNav() {
   const pathName = usePathname();
 
   return (
-    <nav>
+    <nav className="hidden lg:block">
       <ul className="space-y-6">
         <li>
           <Link

@@ -30,7 +30,7 @@ export default function DocumentPage({
   }
 
   return (
-    <main className="space-y-8 w-full pb-12">
+    <main className="space-y-6 w-full">
       <div className="flex justify-between items-center">
         <h1 className="text-4xl font-bold">{document.title}</h1>
 

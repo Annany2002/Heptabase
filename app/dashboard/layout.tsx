@@ -6,7 +6,7 @@ export default function NotesLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen container gap-20 mx-auto pt-12">
+    <div className="flex container gap-20 mx-auto pt-12">
       <SideNav />
       <div className="w-full">{children}</div>
     </div>

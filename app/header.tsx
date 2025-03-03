@@ -2,6 +2,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { FilePen } from "lucide-react";
 import { HeaderActions } from "./header-actions";
 import Link from "next/link";
+import HamburgerMenu from "@/components/hamburger-menu";
 
 export function Header() {
   return (
@@ -23,6 +24,9 @@ export function Header() {
         </div>
         <div>
           <div className="flex gap-4 items-center">
+            <div className="lg:hidden block">
+              <HamburgerMenu />
+            </div>
             <ModeToggle />
             <HeaderActions />
           </div>

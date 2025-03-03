@@ -15,7 +15,7 @@ export default function ChatPanel({
 
   return (
     <div className="border flex flex-col gap-2 p-6 justify-between">
-      <div className="overflow-y-auto h-[350px] space-y-2">
+      <div className="overflow-y-auto h-[calc(100vh-340px)] space-y-2">
         <div className="bg-white border dark:bg-gray-900/90 rounded p-3">
           AI : Ask any questions related to your pdf
         </div>
