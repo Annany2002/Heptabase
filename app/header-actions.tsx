@@ -17,8 +17,8 @@ export function HeaderActions() {
 
       <AuthLoading>
         <div className="flex gap-2">
-          Loading
           <LoaderCircle className="animate-spin" />
+          Loading
         </div>
       </AuthLoading>
     </>

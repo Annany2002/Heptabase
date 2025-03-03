@@ -37,11 +37,17 @@ export default function DocumentPage({
         <DeleteDocumentButton documentId={document._id} />
       </div>
       <div className="flex gap-12">
-        <Tabs defaultValue="document" className="w-full">
+        <Tabs defaultValue="summary" className="w-full">
           <TabsList className="mb-2">
+            <TabsTrigger value="summary">Summary</TabsTrigger>
             <TabsTrigger value="document">Document</TabsTrigger>
             <TabsTrigger value="chat">Chat</TabsTrigger>
           </TabsList>
+          <TabsContent value="summary">
+            <div className="border p-4 rounded-xl flex-1 h-fit">
+              <h1>{document.description}</h1>
+            </div>
+          </TabsContent>
           <TabsContent value="document">
             <div className="border p-4 rounded-xl flex-1 h-[500px]">
               {document.documentUrl && (

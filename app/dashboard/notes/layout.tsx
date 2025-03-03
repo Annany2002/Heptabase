@@ -49,7 +49,7 @@ export default function NotesLayout({
       {notes && notes.length > 0 && (
         <div className="flex gap-12">
           <ul className="space-y-2 w-[200px]">
-            {notes?.map((note) => (
+            {notes.map((note) => (
               <li
                 className={`text-lg hover:text-cyan-100 ${note._id === noteId && "text-cyan-300"}`}
                 key={note._id}
@@ -60,7 +60,7 @@ export default function NotesLayout({
               </li>
             ))}
           </ul>
-          <div className="p-4 rounded-md max-w-full">{children}</div>
+          <div className="p-4 rounded-md w-full">{children}</div>
         </div>
       )}
     </main>

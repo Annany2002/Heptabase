@@ -11,6 +11,7 @@ export default function NotesPage() {
   const note = useQuery(api.notes.getNote, {
     noteId,
   });
+  console.log(note?.text);
   if (!note) {
     return null;
   }
