@@ -25,7 +25,7 @@ export default function NotesLayout({
   const { noteId } = useParams<{ noteId: Id<"notes"> }>();
 
   return (
-    <main className="space-y-6">
+    <main className="space-y-6 w-full px-6">
       <div className="flex justify-between">
         <h1 className="font-bold text-3xl">Notes</h1>
         <CreateNoteButton />
@@ -49,11 +49,12 @@ export default function NotesLayout({
       {notes && notes.length > 0 && (
         <div className="flex gap-12">
           <ul className="space-y-2 w-[200px]">
-            {notes.map((note) => (
+            {notes.map((note, _) => (
               <li
-                className={`text-lg hover:text-cyan-100 ${note._id === noteId && "text-cyan-300"}`}
+                className={`sm:text-sm md:text-base lg:text-lg hover:text-cyan-100 ${note._id === noteId && "text-cyan-300"}`}
                 key={note._id}
               >
+                {"- "}
                 <Link href={`/dashboard/notes/${note._id}`}>
                   {note.text.substring(0, 24) + "..."}
                 </Link>
@@ -68,7 +69,7 @@ export default function NotesLayout({
 }
 function NoNotes() {
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center  justify-center">
       <Card className="mt-10 w-[350px] flex flex-col gap-4 items-center justify-center">
         <CardHeader>
           <CardDescription className="text-lg">

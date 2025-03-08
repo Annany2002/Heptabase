@@ -15,7 +15,7 @@ export default function SearchResultComponent({
   return (
     <Link
       href={url}
-      className="bg-slate-100 border dark:bg-slate-800 p-4 rounded-md "
+      className="bg-slate-100 border dark:bg-gray-900 p-4 rounded-md "
     >
       <div className="space-y-2">
         <div className="flex justify-between">
@@ -23,12 +23,12 @@ export default function SearchResultComponent({
             {type === "notes" ? (
               <>
                 <Notebook size={20} color="#8c8b87" />
-                <p className="text-xl text-[#8c8b87]">Note</p>
+                <p className="text-xl font-semibold text-[#8c8b87]">Note</p>
               </>
             ) : (
               <>
                 <FileText color="#8c8b87" size={20} />
-                <p className="text-xl text-[#8c8b87]">Document</p>
+                <p className="text-xl font-semibold text-[#8c8b87]">Document</p>
               </>
             )}
           </div>

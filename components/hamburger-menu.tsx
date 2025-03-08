@@ -8,7 +8,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { FileText, Menu, NotebookPen, Search } from "lucide-react";
+import {
+  CircleDollarSign,
+  FileText,
+  Menu,
+  NotebookPen,
+  Search,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -50,6 +56,15 @@ export default function HamburgerMenu() {
                 >
                   <NotebookPen />
                   Notes
+                </Link>
+              </li>
+              <li>
+                <Link
+                  className={`font-light flex gap-2 items-center text-xl hover:text-cyan-300 ${pathName.endsWith("/pricing") && "text-cyan-400"}`}
+                  href={"/pricing"}
+                >
+                  <CircleDollarSign />
+                  Pricing
                 </Link>
               </li>
             </ul>

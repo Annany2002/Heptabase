@@ -19,14 +19,14 @@ export default function Home() {
   const documents = useQuery(api.documents.getDocuments);
 
   return (
-    <main className="space-y-8">
+    <main className="space-y-8 w-full px-6">
       <div className="flex justify-between">
         <h1 className="font-bold text-3xl">My Documents</h1>
         <UploadDocumentButton />
       </div>
 
       {documents === undefined && (
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 justify-items-center gap-x-6 gap-y-10">
           {new Array(8).fill("").map((i, _) => (
             <div key={_}>
               <SkeletonCard />

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { SearchForm } from "./search-form";
 import { api } from "@/convex/_generated/api";
 import SearchResultComponent from "./search-result-component";
+import { Button } from "@/components/ui/button";
 
 export default function SearchPage() {
   const [results, setResults] =
@@ -15,10 +16,22 @@ export default function SearchPage() {
     setResults(JSON.parse(localResults));
   }, []);
 
+  const deleteSearchResults = () => {
+    if (results && results.length > 0) {
+      setResults([]);
+      localStorage.removeItem("searchResults");
+    }
+  };
+
   return (
-    <main className="space-y-8">
+    <main className="space-y-8 w-full px-6">
       <div className="flex justify-between">
-        <h1 className="font-bold text-3xl">Search</h1>
+        <h1 className="font-bold text-cyan-500 text-3xl">Search</h1>
+        {results && results.length > 0 && (
+          <Button onClick={deleteSearchResults} variant={"destructive"}>
+            Delete Search Results
+          </Button>
+        )}
       </div>
       <SearchForm
         setResults={(results) => {

@@ -11,13 +11,13 @@ export default function NotesPage() {
   const note = useQuery(api.notes.getNote, {
     noteId,
   });
-  console.log(note?.text);
+
   if (!note) {
     return null;
   }
 
   return (
-    <div className="p-3 bg-slate-100 rounded-md border dark:bg-gray-700 w-[600px]">
+    <div className="p-3 bg-slate-100 rounded-md border dark:bg-gray-700">
       <DeleteNoteButton noteId={note._id} />
       <p className="whitespace-pre-line break-words">{note?.text}</p>
     </div>

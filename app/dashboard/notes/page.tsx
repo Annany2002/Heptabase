@@ -4,8 +4,8 @@ import Image from "next/image";
 
 export default function NotesPage() {
   return (
-    <main className="space-y-8 w-full h-full pb-12">
-      <div className="flex flex-col items-center justify-center gap-4">
+    <main className="space-y-8 w-full mt-12  pb-12">
+      <div className="flex flex-col ml-32  gap-4">
         <Image
           src="/undraw_choose-card_es1o.svg"
           alt="add-notes"

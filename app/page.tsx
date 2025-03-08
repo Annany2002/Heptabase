@@ -22,7 +22,7 @@ export default function LandingPage() {
           />
         </div>
         <div className="mx-auto max-w-2xl py-12">
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-6">
             <Image
               src={"/undraw_add_files_re_v09g.svg"}
               width="200"
@@ -35,8 +35,8 @@ export default function LandingPage() {
             </h1>
             <p className="mt-6 text-lg dark:text-gray-200 leading-8 text-gray-600">
               Heptabase is tool that allows you to chat with your pdf, make
-              notes, search 56 percent faster among all over your stuff with
-              vector search
+              notes, search<span className="font-bold text-cyan-500"> 56</span>{" "}
+              percent faster among all over your stuff with vector search
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Unauthenticated>
