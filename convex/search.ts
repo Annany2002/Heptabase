@@ -1,7 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { action } from "./_generated/server";
 import { embed } from "./notes";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import { Doc } from "./_generated/dataModel";
 
 export const searchAction = action({
@@ -52,24 +52,26 @@ export const searchAction = action({
       })
     );
 
-    await Promise.all(
-      documentResults.map(async (doc) => {
-        const document = await ctx.runQuery(api.documents.getDocument, {
-          documentId: doc._id,
-        });
-        if (!document) {
-          return;
-        }
-        records.push({
-          type: "documents",
-          score: doc._score,
-          record: document,
-        });
-      })
-    );
+    await ctx.runMutation(internal.user.updateUserUsage, {
+      val: "searches",
+    }),
+      await Promise.all(
+        documentResults.map(async (doc) => {
+          const document = await ctx.runQuery(api.documents.getDocument, {
+            documentId: doc._id,
+          });
+          if (!document) {
+            return;
+          }
+          records.push({
+            type: "documents",
+            score: doc._score,
+            record: document,
+          });
+        })
+      );
 
     records.sort((a, b) => b.score - a.score);
-
     return records;
   },
 });

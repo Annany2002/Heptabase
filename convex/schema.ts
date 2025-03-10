@@ -6,6 +6,11 @@ export default defineSchema({
     tokenIdentifier: v.string(),
     email: v.string(),
     name: v.string(),
+    isPremiun: v.boolean(),
+    questions: v.number(),
+    docs: v.number(),
+    notes: v.number(),
+    searches: v.number(),
   }).index("by_tokenIdentifier", ["tokenIdentifier"]),
 
   documents: defineTable({

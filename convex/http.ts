@@ -26,7 +26,7 @@ http.route({
         case "user.created":
           await ctx.runMutation(internal.user.createUser, {
             tokenIdentifier: result.data.id,
-            name: result.data.first_name as string,
+            name: `${result.data.first_name} + ${result.data.last_name}`,
             email: result.data.email_addresses[0].email_address,
           });
       }

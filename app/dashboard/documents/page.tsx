@@ -17,12 +17,13 @@ import { SignInButton } from "@clerk/nextjs";
 
 export default function Home() {
   const documents = useQuery(api.documents.getDocuments);
+  const user = useQuery(api.user.getUser);
 
   return (
     <main className="space-y-8 w-full px-6">
       <div className="flex justify-between">
-        <h1 className="font-bold text-3xl">My Documents</h1>
-        <UploadDocumentButton />
+        <h1 className="font-bold text-3xl text-cyan-500">My Documents</h1>
+        {user?.docs! <= 2 && <UploadDocumentButton />}
       </div>
 
       {documents === undefined && (

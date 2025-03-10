@@ -77,6 +77,10 @@ export const createDocument = mutation({
       content: args.content,
     });
 
+    await ctx.runMutation(internal.user.updateUserUsage, {
+      val: "docs",
+    });
+
     await ctx.scheduler.runAfter(
       0,
       internal.documents.generateDocumentDescription,
@@ -103,7 +107,6 @@ export const generateDocumentDescription = internalAction({
     }
 
     const pdfResp = await fetch(url).then((response) => response.arrayBuffer());
-
     const base64Data = arrayBufferToBase64(pdfResp);
 
     const result = await model.generateContent([
@@ -247,6 +250,10 @@ export const askQuestion = action({
     const result = await chat.sendMessage(msg);
     const response = result.response;
     const res = response.text();
+
+    await ctx.runMutation(internal.user.updateUserUsage, {
+      val: "questions",
+    });
 
     //HUMAN
     await ctx.runMutation(internal.chats.createChatRecord, {

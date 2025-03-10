@@ -21,6 +21,7 @@ const formSchema = z.object({
 });
 
 export function QuestionForm({ documentId }: { documentId: Id<"documents"> }) {
+  const user = useQuery(api.user.getUser);
   const askQuestion = useAction(api.documents.askQuestion);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -62,12 +63,14 @@ export function QuestionForm({ documentId }: { documentId: Id<"documents"> }) {
           )}
         />
 
-        <LoadingButton
-          isLoading={form.formState.isSubmitting}
-          loadingText="Submitting..."
-        >
-          Submit
-        </LoadingButton>
+        {user?.questions! <= 9 && (
+          <LoadingButton
+            isLoading={form.formState.isSubmitting}
+            loadingText="Submitting..."
+          >
+            Submit
+          </LoadingButton>
+        )}
       </form>
     </Form>
   );

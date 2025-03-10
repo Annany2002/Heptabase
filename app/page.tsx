@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function LandingPage() {
   return (
-    <div className="bg-slate-100 dark:bg-black h-[calc(100vh-73px)]">
+    <div className="bg-slate-100 dark:bg-black h-[calc(100dvh-70px)]">
       <div className="relative isolate pt-10 px-6 lg:px-8">
         <div
           aria-hidden="true"

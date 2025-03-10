@@ -76,6 +76,10 @@ export const createNote = mutation({
       tokenIdentifier: userId,
     });
 
+    await ctx.runMutation(internal.user.updateUserUsage, {
+      val: "notes",
+    });
+
     await ctx.scheduler.runAfter(0, internal.notes.createNoteEmbeddings, {
       noteId,
       text: args.text,

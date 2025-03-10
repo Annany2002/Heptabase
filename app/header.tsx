@@ -1,8 +1,11 @@
+"use client";
+
 import { ModeToggle } from "@/components/mode-toggle";
 import { FilePen } from "lucide-react";
 import { HeaderActions } from "./header-actions";
 import Link from "next/link";
 import HamburgerMenu from "@/components/hamburger-menu";
+import { Authenticated, Unauthenticated } from "convex/react";
 
 export function Header() {
   return (
@@ -27,7 +30,14 @@ export function Header() {
               Notes
             </Link>
             <Link className="hover:text-gray-500" href={"/pricing"}>
-              Pricing
+              <Authenticated>
+                <span className="text-cyan-500  hover:underline underline-offset-2 font-stretch-extra-condensed font-semibold">
+                  Premium
+                </span>
+              </Authenticated>
+              <Unauthenticated>
+                <span>Pricing</span>
+              </Unauthenticated>
             </Link>
           </div>
         </div>

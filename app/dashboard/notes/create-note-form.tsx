@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import LoadingButton from "@/components/loading-button";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,6 +28,7 @@ export default function CreateNoteForm({
 }: {
   onNoteCreated: () => void;
 }) {
+  const user = useQuery(api.user.getUser);
   const createNote = useMutation(api.notes.createNote);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -61,12 +62,14 @@ export default function CreateNoteForm({
           )}
         />
 
-        <LoadingButton
-          loadingText="Creating..."
-          isLoading={form.formState.isSubmitting}
-        >
-          Create
-        </LoadingButton>
+        {user?.notes! <= 9 && (
+          <LoadingButton
+            loadingText="Creating..."
+            isLoading={form.formState.isSubmitting}
+          >
+            Create
+          </LoadingButton>
+        )}
       </form>
     </Form>
   );
