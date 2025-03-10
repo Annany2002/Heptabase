@@ -15,6 +15,15 @@ Heptabase is a full-stack web application designed to provide users with an inte
 - **Information Extraction:** Extract specific information from the PDF based on user queries.
 - **Intuitive Interface:** A user-friendly interface makes it simple to interact with the application.
 
+### Usage Limits
+
+| Feature               | Normal Plan | **Premium** Plan |
+| --------------------- | ----------- | ---------------- |
+| **Chats**             | 10          | Unlimited        |
+| **Documents Uploads** | 3           | Unlimited        |
+| **Notes**             | 10          | Unlimited        |
+| **Searches**          | 5           | Unlimited        |
+
 ### Technology Stack
 
 - **Frontend:** Next.js, TypeScript, Shadcn UI components, Clerk for authentication
@@ -47,7 +56,7 @@ Heptabase is a full-stack web application designed to provide users with an inte
    npm run dev
    ```
 
-5. **Run the Convex Database**
+5. **Run the Convex Database Server**
 
    ```bash
    npx convex dev
