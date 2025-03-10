@@ -17,12 +17,12 @@ Heptabase is a full-stack web application designed to provide users with an inte
 
 ### Usage Limits
 
-| Feature               | Normal Plan | **Premium** Plan |
-| --------------------- | ----------- | ---------------- |
-| **Chats**             | 10          | Unlimited        |
-| **Documents Uploads** | 3           | Unlimited        |
-| **Notes**             | 10          | Unlimited        |
-| **Searches**          | 5           | Unlimited        |
+| Feature               | Normal Plan | **Premium** (Upcoming) Plan |
+| --------------------- | ----------- | --------------------------- |
+| **Chats**             | 10          | Unlimited                   |
+| **Documents Uploads** | 3           | Unlimited                   |
+| **Notes**             | 10          | Unlimited                   |
+| **Searches**          | 5           | Unlimited                   |
 
 ### Technology Stack
 
