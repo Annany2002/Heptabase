@@ -28,14 +28,17 @@ export const createUser = internalMutation({
 
 export const getUser = query({
   async handler(ctx) {
-    const tokenIdentifier = (
-      await ctx.auth.getUserIdentity()
-    ).tokenIdentifier.split("|")[1];
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Unauthenticated");
+    }
+
+    const tokenIdentifier = identity.tokenIdentifier.split("|")[1];
 
     return await ctx.db
       .query("users")
       .withIndex("by_tokenIdentifier", (q) =>
-        q.eq("tokenIdentifier", tokenIdentifier)
+        q.eq("tokenIdentifier", tokenIdentifier!)
       )
       .first();
   },
@@ -46,9 +49,13 @@ export const updateUserUsage = internalMutation({
     val: v.string(),
   },
   async handler(ctx, args) {
-    const tokenIdentifier = (
-      await ctx.auth.getUserIdentity()
-    ).tokenIdentifier.split("|")[1];
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError("Unauthenticated");
+    }
+
+    const tokenIdentifier = identity.tokenIdentifier.split("|")[1];
 
     const userExists = await ctx.db
       .query("users")
