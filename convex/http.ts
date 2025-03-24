@@ -1,5 +1,5 @@
 import { httpRouter } from "convex/server";
-import { httpAction, mutation } from "./_generated/server";
+import { httpAction } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { WebhookEvent } from "@clerk/nextjs/server";
 

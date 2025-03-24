@@ -5,6 +5,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { QuestionForm } from "./question-form";
 import MDEditor from "@uiw/react-md-editor";
+import ReactMarkdown from "react-markdown";
 
 export default function ChatPanel({
   documentId,
@@ -29,16 +30,15 @@ export default function ChatPanel({
               <div className="flex justify-end">
                 <p className="font-bold text-gray-500">
                   YOU :{" "}
-                  <span className="font-medium text-white">{chat.text}</span>
+                  <span className="font-medium text-gray-950 dark:text-white">
+                    {chat.text}
+                  </span>
                 </p>
               </div>
             ) : (
-              <div className="flex flex-col gap-1 justify-start">
-                <p>AI : </p>
-                <MDEditor.Markdown
-                  source={chat.text}
-                  className="rounded-xl bg-gray-100 dark:bg-gray-900/90"
-                />
+              <div className="flex flex-col gap-1 justify-start p-1 text-base">
+                <p className="text-cyan-500">AI : </p>
+                <ReactMarkdown>{chat.text}</ReactMarkdown>
               </div>
             )}
           </div>

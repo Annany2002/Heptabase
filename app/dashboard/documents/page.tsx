@@ -16,8 +16,8 @@ import Image from "next/image";
 import { SignInButton } from "@clerk/nextjs";
 
 export default function Home() {
-  const documents = useQuery(api.documents.getDocuments);
   const user = useQuery(api.user.getUser);
+  const documents = useQuery(api.documents.getDocuments);
 
   return (
     <main className="space-y-8 w-full px-6">
