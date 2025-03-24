@@ -4,7 +4,6 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { QuestionForm } from "./question-form";
-import MDEditor from "@uiw/react-md-editor";
 import ReactMarkdown from "react-markdown";
 
 export default function ChatPanel({
