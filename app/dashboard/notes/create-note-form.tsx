@@ -62,7 +62,7 @@ export default function CreateNoteForm({
           )}
         />
 
-        {user?.notes! <= 9 && (
+        {(user?.notes! <= 9 || user?.isPremium) && (
           <LoadingButton
             loadingText="Creating..."
             isLoading={form.formState.isSubmitting}

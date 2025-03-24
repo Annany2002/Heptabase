@@ -29,7 +29,8 @@ export default function HamburgerMenu() {
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Menu</SheetTitle>
-          <SheetDescription>
+          <SheetDescription>Access the features</SheetDescription>
+          <SheetContent>
             <ul className="space-y-6 mt-12">
               <li>
                 <Link
@@ -68,7 +69,7 @@ export default function HamburgerMenu() {
                 </Link>
               </li>
             </ul>
-          </SheetDescription>
+          </SheetContent>
         </SheetHeader>
       </SheetContent>
     </Sheet>

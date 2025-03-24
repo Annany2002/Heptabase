@@ -6,7 +6,7 @@ export default defineSchema({
     tokenIdentifier: v.string(),
     email: v.string(),
     name: v.string(),
-    isPremiun: v.boolean(),
+    isPremium: v.optional(v.boolean()),
     questions: v.number(),
     docs: v.number(),
     notes: v.number(),

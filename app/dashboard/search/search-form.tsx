@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAction } from "convex/react";
+import { useAction, useQuery } from "convex/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -24,6 +24,7 @@ export function SearchForm({
 }: {
   setResults: (notes: typeof api.search.searchAction._returnType) => void;
 }) {
+  const user = useQuery(api.user.getUser);
   const searchAction = useAction(api.search.searchAction);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -62,12 +63,14 @@ export function SearchForm({
           )}
         />
 
-        <LoadingButton
-          isLoading={form.formState.isSubmitting}
-          loadingText="Searching..."
-        >
-          Search
-        </LoadingButton>
+        {(user?.searches! < 5 || user?.isPremium) && (
+          <LoadingButton
+            isLoading={form.formState.isSubmitting}
+            loadingText="Searching..."
+          >
+            Search
+          </LoadingButton>
+        )}
       </form>
     </Form>
   );

@@ -23,7 +23,7 @@ export default function Home() {
     <main className="space-y-8 w-full px-6">
       <div className="flex justify-between">
         <h1 className="font-bold text-3xl text-cyan-500">My Documents</h1>
-        {user?.docs! <= 2 && <UploadDocumentButton />}
+        {(user?.docs! <= 2 || user?.isPremium) && <UploadDocumentButton />}
       </div>
 
       {documents === undefined && (

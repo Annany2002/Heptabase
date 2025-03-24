@@ -1,23 +1,26 @@
 "use client";
 
 import { ModeToggle } from "@/components/mode-toggle";
-import { FilePen } from "lucide-react";
+import { Crown, FilePen } from "lucide-react";
 import { HeaderActions } from "./header-actions";
 import Link from "next/link";
 import HamburgerMenu from "@/components/hamburger-menu";
-import { Authenticated, Unauthenticated } from "convex/react";
+import { Authenticated, Unauthenticated, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export function Header() {
+  const user = useQuery(api.user.getUser);
+
   return (
     <div className="dark:bg-neutral-950 z-10 border-b relative py-4 bg-neutral-50">
       <div className="container mx-auto flex gap-6 items-center">
         <div className="flex flex-1 gap-8 items-center justify-between">
           <Link
             href={"/"}
-            className="flex tracking-wide items-center gap-2 text-2xl"
+            className="flex tracking-wide items-center gap-2 text:xl lg:text-2xl"
           >
             HeptaBase
-            <FilePen />
+            {user?.isPremium ? <Crown color="#06b6d4" /> : <FilePen />}
           </Link>
           <div className="hidden lg:flex gap-6 font-md">
             <Link className="hover:text-gray-500" href={"/dashboard/documents"}>
@@ -31,9 +34,11 @@ export function Header() {
             </Link>
             <Link className="hover:text-gray-500" href={"/pricing"}>
               <Authenticated>
-                <span className="text-cyan-500  hover:underline underline-offset-2 font-stretch-extra-condensed font-semibold">
-                  Premium
-                </span>
+                {user?.isPremium === false && (
+                  <span className="text-cyan-500  hover:underline underline-offset-2 font-stretch-extra-condensed font-semibold">
+                    Premium
+                  </span>
+                )}
               </Authenticated>
               <Unauthenticated>
                 <span>Pricing</span>

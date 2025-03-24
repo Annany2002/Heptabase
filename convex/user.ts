@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { internalMutation, query } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 
 export const createUser = internalMutation({
   args: {
@@ -17,7 +17,7 @@ export const createUser = internalMutation({
       tokenIdentifier: args.tokenIdentifier,
       name: args.name,
       email: args.email,
-      isPremiun: false,
+      isPremium: false,
       docs: 0,
       questions: 0,
       notes: 0,
@@ -88,5 +88,22 @@ export const updateUserUsage = internalMutation({
         docs: prevCount + 1,
       });
     }
+  },
+});
+
+export const updateMembership = mutation({
+  args: {
+    userId: v.id("users"),
+  },
+  async handler(ctx, args) {
+    const user = await ctx.db.get(args.userId);
+
+    if (!user) {
+      throw new ConvexError("User not found");
+    }
+
+    await ctx.db.patch(user._id, {
+      isPremium: true,
+    });
   },
 });

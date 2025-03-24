@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -13,8 +13,11 @@ import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import Link from "next/link";
 import { Authenticated, Unauthenticated } from "convex/react";
+import { UpdateMembership } from "@/components/update-membership";
 
 const PricingPage: React.FC = () => {
+  const [open, setIsOpen] = useState(false);
+
   return (
     <div className="bg-slate-100 dark:bg-black min-h-[100dvh-72px]">
       <div className="relative isolate px-6 lg:px-8 pt-8">
@@ -180,9 +183,7 @@ const PricingPage: React.FC = () => {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full bg-indigo-600 hover:bg-indigo-500">
-                    Subscribe Now
-                  </Button>
+                  <UpdateMembership open={open} setIsOpen={setIsOpen} />
                 </CardFooter>
               </Card>
             </div>
