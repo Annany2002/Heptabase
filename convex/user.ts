@@ -30,7 +30,7 @@ export const getUser = query({
   async handler(ctx) {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new ConvexError("Unauthenticated");
+      return null;
     }
 
     const tokenIdentifier = identity.tokenIdentifier.split("|")[1];

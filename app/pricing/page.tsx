@@ -60,7 +60,7 @@ const PricingPage: React.FC = () => {
                     Perfect for trying out our service
                   </CardDescription>
                   <div className="mt-4">
-                    <span className="text-3xl font-bold">$0</span>
+                    <span className="text-3xl font-bold">Rs. 0</span>
                     <span className="text-gray-500 dark:text-gray-400 ml-1">
                       / month
                     </span>
@@ -71,6 +71,10 @@ const PricingPage: React.FC = () => {
                     <li className="flex items-start">
                       <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
                       <span>10 PDF chats per user</span>
+                    </li>
+                    <li className="flex items-start">
+                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+                      <span>3 Docs per user</span>
                     </li>
                     <li className="flex items-start">
                       <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
@@ -106,7 +110,7 @@ const PricingPage: React.FC = () => {
                     For serious PDF chat users
                   </CardDescription>
                   <div className="mt-4">
-                    <span className="text-3xl font-bold">$1</span>
+                    <span className="text-3xl font-bold">Rs. 29</span>
                     <span className="text-gray-500 dark:text-gray-400 ml-1">
                       / month
                     </span>
@@ -156,7 +160,7 @@ const PricingPage: React.FC = () => {
                     For serious PDF chat users
                   </CardDescription>
                   <div className="mt-4">
-                    <span className="text-3xl font-bold">$1</span>
+                    <span className="text-3xl font-bold">Rs. 29</span>
                     <span className="text-gray-500 dark:text-gray-400 ml-1">
                       / month
                     </span>
