@@ -1,7 +1,7 @@
 "use client";
 
 import { ModeToggle } from "@/components/mode-toggle";
-import { Crown, FilePen } from "lucide-react";
+import { Crown, FilePen, ShieldBan } from "lucide-react";
 import { HeaderActions } from "./header-actions";
 import Link from "next/link";
 import HamburgerMenu from "@/components/hamburger-menu";
@@ -22,7 +22,13 @@ export function Header() {
             HeptaBase
             {user?.isPremium ? <Crown color="#06b6d4" /> : <FilePen />}
           </Link>
-          <div className="hidden lg:flex gap-6 font-md">
+
+          <div className="hidden lg:flex items-center gap-6 font-md">
+            {user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
+              <Link href={"/admin"}>
+                <ShieldBan size={20} color="cyan" />
+              </Link>
+            )}
             <Link className="hover:text-gray-500" href={"/dashboard/documents"}>
               Documents
             </Link>

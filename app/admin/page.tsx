@@ -75,10 +75,14 @@ export default function AdminDashboard() {
   const [premiumCode, setPremiumCode] = useState("");
 
   useEffect(() => {
-    if (user?.primaryEmailAddress?.emailAddress !== process.env.ADMIN_EMAIL) {
+    if (
+      user?.primaryEmailAddress?.emailAddress !==
+      process.env.NEXT_PUBLIC_ADMIN_EMAIL
+    ) {
       router.push("/");
+      return;
     }
-  }, []);
+  }, [router, user?.primaryEmailAddress?.emailAddress]);
 
   return (
     <div className="min-h-screen bg-background text-foreground p-4 md:p-8">

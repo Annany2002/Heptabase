@@ -16,6 +16,7 @@ import {
   Menu,
   NotebookPen,
   Search,
+  ShieldBan,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -62,6 +63,13 @@ export default function HamburgerMenu() {
                 <NotebookPen />
                 Notes
               </Link>
+            </li>
+            <li>
+              {user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
+                <Link href={"/admin"}>
+                  <ShieldBan color="cyan" />
+                </Link>
+              )}
             </li>
             {user?.isPremium === false && (
               <li>
