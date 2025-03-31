@@ -1,6 +1,11 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
+enum status {
+  AVAILABLE,
+  REDEEMED,
+}
+
 export default defineSchema({
   users: defineTable({
     tokenIdentifier: v.string(),
@@ -50,7 +55,8 @@ export default defineSchema({
   tokens: defineTable({
     code: v.string(),
     createdAt: v.number(),
-    expiredAt: v.number(),
+    expiresAt: v.number(),
+    status: v.union(v.literal("Available"), v.literal("Redeemed")),
     tokenIdentifier: v.optional(v.string()),
   }).index("by_tokenIdentifier", ["tokenIdentifier"]),
 });
