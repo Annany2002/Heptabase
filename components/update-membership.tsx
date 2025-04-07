@@ -30,17 +30,21 @@ export function UpdateMembership({
   const [premiumCode, setPremiumCode] = useState("");
   const router = useRouter();
 
-  const updateMembershipHandler = () => {
-    if (premiumCode === process.env.NEXT_PUBLIC_CODE!) {
-      updateMembership({ userId: user?._id! });
-      toast({ description: "Membership Updated" });
-      router.push("/dashboard/documents");
-    } else {
+  const updateMembershipHandler = async () => {
+    const membershipUpdatedStatus = await updateMembership({
+      code: premiumCode,
+      userId: user?._id!,
+    });
+    console.log(membershipUpdatedStatus);
+    if (!membershipUpdatedStatus) {
       toast({
         title: "Membership Declined",
         description: "Invalid Code",
         variant: "destructive",
       });
+    } else {
+      toast({ description: "Membership Updated Successfully" });
+      router.push("/dashboard/documents");
     }
     setIsOpen(false);
   };

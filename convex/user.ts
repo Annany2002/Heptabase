@@ -1,5 +1,6 @@
 import { ConvexError, v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
 
 export const createUser = internalMutation({
   args: {
@@ -93,17 +94,32 @@ export const updateUserUsage = internalMutation({
 
 export const updateMembership = mutation({
   args: {
+    code: v.string(),
     userId: v.id("users"),
   },
   async handler(ctx, args) {
-    const user = await ctx.db.get(args.userId);
-
+    const user = await ctx.auth.getUserIdentity();
     if (!user) {
       throw new ConvexError("User not found");
     }
 
-    await ctx.db.patch(user._id, {
-      isPremium: true,
+    const isValidCode = await ctx.runQuery(internal.token.validateToken, {
+      code: args.code,
     });
+
+    if (!isValidCode) {
+      return false;
+    }
+
+    await Promise.allSettled([
+      ctx.db.patch(args.userId, {
+        isPremium: true,
+      }),
+      ctx.db.patch(isValidCode._id, {
+        status: "Redeemed",
+        tokenIdentifier: args.userId,
+      }),
+    ]);
+    return true;
   },
 });

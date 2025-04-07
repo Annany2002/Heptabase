@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import {
-  Plus,
   Search,
   Package,
   CheckCircle,
@@ -26,7 +25,10 @@ import {
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import CopyCode from "@/components/code-copy";
+import CodeGenerate from "@/components/code-copy";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "@/components/ui/use-toast";
 
 interface PremiumCode {
   id: string;
@@ -37,42 +39,14 @@ interface PremiumCode {
   redeemedBy?: string;
 }
 
-const sampleCodes: PremiumCode[] = [
-  {
-    id: "1",
-    code: "PREMIUM-ABC123",
-    createdAt: "7/15/2023",
-    expiresAt: "10/15/2023",
-    status: "Redeemed",
-    redeemedBy: "user@example.com",
-  },
-  {
-    id: "2",
-    code: "PREMIUM-DEF456",
-    createdAt: "8/20/2023",
-    expiresAt: "11/20/2023",
-    status: "Available",
-  },
-  {
-    id: "3",
-    code: "PREMIUM-GHI789",
-    createdAt: "9/5/2023",
-    expiresAt: "3/5/2024",
-    status: "Available",
-  },
-];
-
 export default function AdminDashboard() {
-  const totalCodes = sampleCodes.length;
-  const activeCodes = sampleCodes.filter(
-    (code) => code.status === "Available"
-  ).length;
-  const redeemedCodes = sampleCodes.filter(
-    (code) => code.status === "Redeemed"
-  ).length;
-  const { user } = useUser();
   const router = useRouter();
+  const { user } = useUser();
+  const tokens = useQuery(api.token.getTokens);
+  const deleteToken = useMutation(api.token.deleteToken);
   const [premiumCode, setPremiumCode] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  // console.log(searchQuery);
 
   useEffect(() => {
     if (
@@ -82,10 +56,10 @@ export default function AdminDashboard() {
       router.push("/");
       return;
     }
-  }, [router, user?.primaryEmailAddress?.emailAddress]);
+  }, [router]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-4 md:p-8">
+    <div className="bg-background text-foreground p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
@@ -97,7 +71,10 @@ export default function AdminDashboard() {
               Generate and manage premium access codes
             </p>
           </div>
-          <CopyCode premiumCode={premiumCode} setPremiumCode={setPremiumCode} />
+          <CodeGenerate
+            premiumCode={premiumCode}
+            setPremiumCode={setPremiumCode}
+          />
         </div>
 
         {/* Stats Cards */}
@@ -108,7 +85,7 @@ export default function AdminDashboard() {
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totalCodes}</div>
+              <div className="text-2xl font-bold">{tokens?.length}</div>
               <p className="text-xs text-muted-foreground">
                 All generated codes
               </p>
@@ -122,7 +99,9 @@ export default function AdminDashboard() {
               <CheckCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{activeCodes}</div>
+              <div className="text-2xl font-bold">
+                {tokens?.filter((token) => token.status === "Available").length}
+              </div>
               <p className="text-xs text-muted-foreground">Unredeemed codes</p>
             </CardContent>
           </Card>
@@ -134,7 +113,9 @@ export default function AdminDashboard() {
               <UserCheck className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{redeemedCodes}</div>
+              <div className="text-2xl font-bold">
+                {tokens?.filter((token) => token.status === "Redeemed").length}
+              </div>
               <p className="text-xs text-muted-foreground">
                 Used premium codes
               </p>
@@ -152,6 +133,7 @@ export default function AdminDashboard() {
                 type="text"
                 placeholder="Search by code or user email..."
                 className="pl-8 w-full"
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </CardHeader>
@@ -169,52 +151,73 @@ export default function AdminDashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sampleCodes.map((code) => (
-                  <TableRow key={code.id}>
-                    <TableCell className="font-medium">{code.code}</TableCell>
-                    <TableCell>{code.createdAt}</TableCell>
-                    <TableCell>
-                      <span className="flex items-center">
-                        <Clock className="mr-1 h-3 w-3 text-muted-foreground" />{" "}
-                        {code.expiresAt}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      {code.status === "Available" ? (
-                        <Badge
-                          variant="outline"
-                          className="border-green-500 text-green-600 dark:border-green-700 dark:text-green-500"
-                        >
-                          <span className="mr-1 h-2 w-2 rounded-full bg-green-500 dark:bg-green-600"></span>
-                          Available
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary">
-                          <span className="mr-1 h-2 w-2 rounded-full bg-yellow-500 dark:bg-yellow-600"></span>
-                          Redeemed by {code.redeemedBy}
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" className="mr-1">
-                        <Copy className="h-4 w-4" />
-                        <span className="sr-only">Copy Code</span>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Delete Code</span>
-                      </Button>
+                {(!tokens || tokens.length === 0) && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center p-4">
+                      No tokens generated yet.
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
+                {tokens &&
+                  tokens.map((code) => (
+                    <TableRow key={code._id}>
+                      <TableCell className="font-medium">{code.code}</TableCell>
+                      <TableCell>{code.createdAt}</TableCell>
+                      <TableCell>
+                        <span className="flex items-center">
+                          <Clock className="mr-1 h-3 w-3 text-muted-foreground" />{" "}
+                          {code.expiresAt}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        {code.status === "Available" ? (
+                          <Badge
+                            variant="outline"
+                            className="border-green-500 text-green-600 dark:border-green-700 dark:text-green-500"
+                          >
+                            <span className="mr-1 h-2 w-2 rounded-full bg-green-500 dark:bg-green-600"></span>
+                            Available
+                          </Badge>
+                        ) : (
+                          <Badge variant="secondary">
+                            <span className="mr-1 h-2 w-2 rounded-full bg-yellow-500 dark:bg-yellow-600"></span>
+                            Redeemed by {code.tokenIdentifier}
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          onClick={() => {
+                            window.navigator.clipboard.writeText(code.code);
+                            toast({
+                              description: "Code copied to clipboard",
+                            });
+                          }}
+                          variant="ghost"
+                          size="icon"
+                          className="mr-1"
+                        >
+                          <Copy className="h-4 w-4" />
+                          <span className="sr-only">Copy Code</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => deleteToken({ tokenId: code._id })}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span className="sr-only">Delete Code</span>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
-              <TableCaption>
-                Showing {sampleCodes.length} of {sampleCodes.length} codes
-              </TableCaption>
+              {tokens && tokens.length > 0 && (
+                <TableCaption className="mb-2">
+                  Showing {tokens.length} of {tokens.length}
+                </TableCaption>
+              )}
             </Table>
           </CardContent>
         </Card>

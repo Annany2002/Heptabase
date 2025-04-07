@@ -17,7 +17,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { DialogClose } from "@radix-ui/react-dialog";
 
-export default function CopyCode({
+export default function CopyGenerate({
   premiumCode,
   setPremiumCode,
 }: {
@@ -26,6 +26,8 @@ export default function CopyCode({
 }) {
   const [open, setOpen] = useState(false);
   const insertToken = useMutation(api.token.insertToken);
+  const presentDate = new Date();
+  const expireDate = new Date(presentDate.getTime() + 30 * 24 * 60 * 60 * 1000);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -52,25 +54,24 @@ export default function CopyCode({
           </div>
         )}
         {premiumCode !== "" && (
-          <DialogClose asChild>
-            <Button
-              onClick={() => {
-                window.navigator.clipboard.writeText(premiumCode);
-                toast({
-                  title: "Code has been copied to clipboard",
-                });
-                insertToken({
-                  code: premiumCode,
-                  createdAt: Date.now(),
-                  expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
-                });
-                setOpen(false);
-                setPremiumCode("");
-              }}
-            >
-              Copy Code and Close
-            </Button>
-          </DialogClose>
+          <div className="flex w-full justify-evenly">
+            <DialogClose asChild>
+              <Button
+                onClick={() => {
+                  insertToken({
+                    code: premiumCode,
+                    createdAt: presentDate.toLocaleDateString(),
+                    expiresAt: expireDate.toLocaleDateString(),
+                  });
+                  setOpen(false);
+                  setPremiumCode("");
+                }}
+              >
+                Copy
+              </Button>
+            </DialogClose>
+            <Button onClick={() => setPremiumCode("")}>Reset</Button>
+          </div>
         )}
       </DialogContent>
     </Dialog>
