@@ -22,7 +22,14 @@ export default function Home() {
   return (
     <main className="space-y-8 w-full px-6">
       <div className="flex justify-between">
-        <h1 className="font-bold text-3xl text-cyan-500">My Documents</h1>
+        <div className="flex flex-col gap-2 justify-center">
+          <h1 className="font-bold text-xl md:text-2xl lg:text-3xl text-cyan-500">
+            My Documents
+          </h1>
+          <span className="text-md text-gray-200 font-semibold">
+            ({documents?.length} of 3 left)
+          </span>
+        </div>
         {(user?.docs! <= 2 || user?.isPremium) && <UploadDocumentButton />}
       </div>
 

@@ -46,17 +46,16 @@ export default function AdminDashboard() {
   const deleteToken = useMutation(api.token.deleteToken);
   const [premiumCode, setPremiumCode] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  // console.log(searchQuery);
 
   useEffect(() => {
     if (
-      user?.primaryEmailAddress?.emailAddress !==
-      process.env.NEXT_PUBLIC_ADMIN_EMAIL
+      user &&
+      user.primaryEmailAddress?.emailAddress !== process.env.ADMIN_EMAIL
     ) {
       router.push("/");
       return;
     }
-  }, [router]);
+  }, [user, router]);
 
   return (
     <div className="bg-background text-foreground p-4 md:p-8">

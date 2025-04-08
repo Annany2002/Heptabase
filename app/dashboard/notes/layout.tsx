@@ -27,7 +27,12 @@ export default function NotesLayout({
   return (
     <main className="space-y-6 w-full px-6">
       <div className="flex justify-between">
-        <h1 className="font-bold text-3xl text-cyan-500">My Notes</h1>
+        <div className="flex flex-col gap-2 justify-center">
+          <h1 className="font-bold text-3xl text-cyan-500">My Notes</h1>
+          <span className="text-md text-gray-200 font-semibold">
+            ({notes?.length} of 10 left)
+          </span>
+        </div>
         <CreateNoteButton />
       </div>
       {!notes && (
