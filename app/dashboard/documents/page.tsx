@@ -26,9 +26,11 @@ export default function Home() {
           <h1 className="font-bold text-xl md:text-2xl lg:text-3xl text-cyan-500">
             My Documents
           </h1>
-          <span className="text-md text-gray-200 font-semibold">
-            ({documents?.length} of 3 left)
-          </span>
+          {user?.isPremium === false && (
+            <span className="text-md text-gray-200 font-semibold">
+              ({documents?.length} of 3 left)
+            </span>
+          )}
         </div>
         {(user?.docs! <= 2 || user?.isPremium) && <UploadDocumentButton />}
       </div>

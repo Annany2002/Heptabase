@@ -8,8 +8,14 @@ import {
 } from "./_generated/server";
 
 const checkUserIdentity = async (ctx: MutationCtx | QueryCtx) => {
-  const user = (await ctx.auth.getUserIdentity())?.tokenIdentifier;
-  return user ?? null;
+  const user = await ctx.auth.getUserIdentity();
+  if (!user || !user.tokenIdentifier) {
+    return null;
+  }
+  if (user.email !== process.env.ADMIN_EMAIL) {
+    return null;
+  }
+  return user;
 };
 
 export const insertToken = mutation({
@@ -35,12 +41,13 @@ export const insertToken = mutation({
 
 export const getTokens = query({
   async handler(ctx) {
-    const user = checkUserIdentity(ctx);
+    const user = await checkUserIdentity(ctx);
     if (!user) {
       throw new ConvexError("Not Admin");
     }
 
-    return await ctx.db.query("tokens").collect();
+    const tokens = await ctx.db.query("tokens").collect();
+    return tokens;
   },
 });
 

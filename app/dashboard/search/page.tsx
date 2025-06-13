@@ -30,9 +30,11 @@ export default function SearchPage() {
     <main className="space-y-8 w-full px-6">
       <div className="flex justify-between items-center">
         <h1 className="font-bold text-cyan-500 text-3xl">Search</h1>
-        <span className="text-md text-gray-200 font-semibold">
-          ({user?.searches} of 10 left)
-        </span>
+        {user?.isPremium === false && (
+          <span className="text-md text-gray-200 font-semibold">
+            ({user?.searches} of 10 left)
+          </span>
+        )}
         {results && results.length > 0 && (
           <Button onClick={deleteSearchResults} variant={"destructive"}>
             Delete Search Results

@@ -16,7 +16,6 @@ import { embed } from "./notes";
 import { arrayBufferToBase64 } from "../lib/utils";
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY as string);
-
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 export const generateUploadUrl = mutation(async (ctx) => {

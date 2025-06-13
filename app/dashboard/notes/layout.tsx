@@ -21,6 +21,7 @@ export default function NotesLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const user = useQuery(api.user.getUser);
   const notes = useQuery(api.notes.getNotes);
   const { noteId } = useParams<{ noteId: Id<"notes"> }>();
 
@@ -29,9 +30,11 @@ export default function NotesLayout({
       <div className="flex justify-between">
         <div className="flex flex-col gap-2 justify-center">
           <h1 className="font-bold text-3xl text-cyan-500">My Notes</h1>
-          <span className="text-md text-gray-200 font-semibold">
-            ({notes?.length} of 10 left)
-          </span>
+          {user?.isPremium === false && (
+            <span className="text-md text-gray-200 font-semibold">
+              ({notes?.length} of 10 left)
+            </span>
+          )}
         </div>
         <CreateNoteButton />
       </div>
