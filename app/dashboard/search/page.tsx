@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SearchForm } from "./search-form";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { SearchForm } from "./search-form";
 import SearchResultComponent from "./search-result-component";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "convex/react";
 
 export default function SearchPage() {
   const user = useQuery(api.user.getUser);
@@ -28,11 +28,15 @@ export default function SearchPage() {
 
   return (
     <main className="space-y-8 w-full px-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start  md:items-center">
         <h1 className="font-bold text-cyan-500 text-3xl">Search</h1>
         {user?.isPremium === false && (
           <span className="text-md text-gray-200 font-semibold">
-            ({user?.searches} of 10 left)
+            <span className="text-cyan-500 font-semibold">
+              {" "}
+              {10 - user?.searches}{" "}
+            </span>
+            free searches available. Upgrade to use more searches.
           </span>
         )}
         {results && results.length > 0 && (

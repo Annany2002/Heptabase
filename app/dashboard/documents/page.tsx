@@ -27,8 +27,11 @@ export default function Home() {
             My Documents
           </h1>
           {user?.isPremium === false && (
-            <span className="text-md text-gray-200 font-semibold">
-              ({documents?.length} of 3 left)
+            <span className="text-md text-gray-200">
+              <span className="text-cyan-500 font-semibold">
+                {3 - user?.docs!}
+              </span>{" "}
+              documents available to upload. Upgrade to use more
             </span>
           )}
         </div>

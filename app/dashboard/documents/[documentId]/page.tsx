@@ -45,7 +45,13 @@ export default function DocumentPage({
           </TabsList>
           <TabsContent value="summary">
             <div className="border p-4 rounded-xl flex-1 h-fit">
-              <h1>{document.description}</h1>
+              <h1>
+                {document.description === "" ? (
+                  <Skeleton className="h-24 w-full" />
+                ) : (
+                  document.description
+                )}
+              </h1>
             </div>
           </TabsContent>
           <TabsContent value="document">

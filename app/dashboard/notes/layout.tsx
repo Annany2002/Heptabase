@@ -31,8 +31,11 @@ export default function NotesLayout({
         <div className="flex flex-col gap-2 justify-center">
           <h1 className="font-bold text-3xl text-cyan-500">My Notes</h1>
           {user?.isPremium === false && (
-            <span className="text-md text-gray-200 font-semibold">
-              ({notes?.length} of 10 left)
+            <span className="text-md text-gray-200">
+              <span className="text-cyan-500 font-semibold">
+                {10 - user?.notes}
+              </span>{" "}
+              notes available to upload. Upgrade to use more
             </span>
           )}
         </div>
