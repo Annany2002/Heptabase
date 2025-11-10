@@ -20,7 +20,7 @@ export function Header() {
             className="flex tracking-wide items-center gap-2 text:xl lg:text-2xl"
           >
             HeptaBase
-            {user?.isPremium ? <Crown color="#06b6d4" /> : <FilePen />}
+            {user?.isPremium && <span className="text-cyan-500 text-sm relative top-[5px]">Pro</span>}
           </Link>
 
           <div className="hidden lg:flex items-center gap-6 font-md">
