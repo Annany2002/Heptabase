@@ -1,11 +1,14 @@
 "use client";
 
 import { SignInButton } from "@clerk/nextjs";
-import { Authenticated, Unauthenticated } from "convex/react";
+import { Authenticated, Unauthenticated, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function LandingPage() {
+  const user = useQuery(api.user.getUser);
+
   return (
     <div className="bg-slate-100 dark:bg-black h-[calc(100dvh-70px)]">
       <div className="relative isolate pt-10 px-6 lg:px-8">
@@ -34,7 +37,7 @@ export default function LandingPage() {
               Take control over your document like never before
             </h1>
             <p className="mt-6 text-lg dark:text-gray-200 leading-8 text-gray-600">
-              Heptabase is tool that allows you to chat with your pdf, make
+              <span className="underline text-cyan-500 dark:text-cyan-400 font-mono underline-offset-4">Heptabase</span> is tool that allows you to chat with your pdf, make
               notes, search<span className="font-bold text-cyan-500"> 56</span>{" "}
               percent faster among all over your stuff with vector search
             </p>
@@ -58,7 +61,7 @@ export default function LandingPage() {
         </div>
 
         {/* Pricing Comparison Table */}
-        <div className="mx-auto max-w-4xl py-16 px-6 lg:px-8">
+        {!user?.isPremium && <div className="mx-auto max-w-4xl py-16 px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
               Choose Your Plan
@@ -133,7 +136,7 @@ export default function LandingPage() {
               </tbody>
             </table>
           </div>
-        </div>
+        </div>}
         <div
           aria-hidden="true"
           className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"

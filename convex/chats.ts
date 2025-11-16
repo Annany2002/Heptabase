@@ -27,11 +27,24 @@ export const createChatRecord = internalMutation({
     tokenIdentifier: v.string(),
   },
   async handler(ctx, args) {
-    await ctx.db.insert("chats", {
+    const chatId = await ctx.db.insert("chats", {
       documentId: args.documentId,
       text: args.text,
       isHuman: args.isHuman,
       tokenIdentifier: args.tokenIdentifier,
+    });
+    return chatId;
+  },
+});
+
+export const updateChatText = internalMutation({
+  args: {
+    chatId: v.id("chats"),
+    text: v.string(),
+  },
+  async handler(ctx, args) {
+    await ctx.db.patch(args.chatId, {
+      text: args.text,
     });
   },
 });

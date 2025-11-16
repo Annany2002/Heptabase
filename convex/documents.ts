@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { internal } from "./_generated/api";
 import {
   action,
@@ -11,12 +10,12 @@ import {
   QueryCtx,
 } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
+import { GoogleGenAI } from "@google/genai";
 import { ConvexError, v } from "convex/values";
 import { embed } from "./notes";
 import { arrayBufferToBase64 } from "../lib/utils";
 
-const genAI = new GoogleGenerativeAI(process.env.API_KEY as string);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+export const genAI = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
 
 export const generateUploadUrl = mutation(async (ctx) => {
   return await ctx.storage.generateUploadUrl();
@@ -108,21 +107,30 @@ export const generateDocumentDescription = internalAction({
     const pdfResp = await fetch(url).then((response) => response.arrayBuffer());
     const base64Data = arrayBufferToBase64(pdfResp);
 
-    const result = await model.generateContent([
+    const contents = [
+      { text: "Summarize this document in short" },
       {
         inlineData: {
           data: base64Data,
           mimeType: "application/pdf",
         },
       },
-      "Summarize this document in short",
-    ]);
+    ]
 
-    const embedding = await embed(result.response.text());
+    const result = await genAI.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: contents
+    });
+
+    if (!result.text) {
+      throw new ConvexError("Failed to generate document description");
+    }
+
+    const embedding = await embed(result.text) as number[];
 
     await ctx.runMutation(internal.documents.updateDocumentDescription, {
       documentId: args.documentId,
-      description: result.response.text(),
+      description: result.text,
       embedding,
     });
   },
@@ -282,7 +290,8 @@ export const askQuestion = action({
       throw new ConvexError("File Not Found");
     }
 
-    const chat = model.startChat({
+    const chat = genAI.chats.create({
+      model: 'gemini-2.5-flash',
       history: [
         {
           role: "user",
@@ -304,10 +313,6 @@ export const askQuestion = action({
 
     const msg = `${args.question}`;
 
-    const result = await chat.sendMessage(msg);
-    const response = result.response;
-    const res = response.text();
-
     await ctx.runMutation(internal.user.updateUserUsage, {
       val: "questions",
     });
@@ -320,15 +325,27 @@ export const askQuestion = action({
       tokenIdentifier: obj.userId,
     });
 
-    //AI
-    await ctx.runMutation(internal.chats.createChatRecord, {
+    //AI - Create empty chat record that will be updated with streaming text
+    const aiChatId = await ctx.runMutation(internal.chats.createChatRecord, {
       documentId: args.documentId,
-      text: res,
+      text: "",
       isHuman: false,
       tokenIdentifier: obj.userId,
     });
 
-    return res;
+    const stream = await chat.sendMessageStream({ message: msg });
+    let response = '';
+
+    // Stream chunks and update the chat record in real-time
+    for await (const chunk of stream) {
+      response += chunk.text;
+      await ctx.runMutation(internal.chats.updateChatText, {
+        chatId: aiChatId,
+        text: response,
+      });
+    }
+
+    return response;
   },
 });
 
