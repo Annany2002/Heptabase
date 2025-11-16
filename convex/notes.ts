@@ -5,12 +5,8 @@ import {
   mutation,
   query,
 } from "./_generated/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { internal } from "./_generated/api";
-
-const genAI = new GoogleGenerativeAI(process.env.API_KEY as string);
-
-const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
+import { genAI } from "./documents";
 
 export const getNotes = query({
   async handler(ctx) {
@@ -29,8 +25,11 @@ export const getNotes = query({
 });
 
 export const embed = async (text: string) => {
-  const embedding = await model.embedContent(text);
-  return embedding.embedding.values;
+  const embedding = await genAI.models.embedContent({ model: 'gemini-embedding-001', contents: text, config: { outputDimensionality: 768, } });
+  if (!embedding.embeddings || embedding.embeddings.length === 0) {
+    throw new Error("Failed to generate embedding");
+  }
+  return embedding.embeddings[0].values;
 };
 
 export const setNoteEmbeddings = internalMutation({
@@ -51,7 +50,7 @@ export const createNoteEmbeddings = internalAction({
     text: v.string(),
   },
   async handler(ctx, args) {
-    const embedding = await embed(args.text);
+    const embedding = await embed(args.text) as number[];
 
     await ctx.runMutation(internal.notes.setNoteEmbeddings, {
       noteId: args.noteId,

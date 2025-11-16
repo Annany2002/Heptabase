@@ -19,6 +19,10 @@ export const searchAction = action({
 
     const embedding = await embed(args.searchQuery);
 
+    if (!embedding) {
+      throw new ConvexError("Failed to generate search embedding");
+    }
+
     const noteResults = await ctx.vectorSearch("notes", "by_embedding", {
       vector: embedding,
       limit: 16,
